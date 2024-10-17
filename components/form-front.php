@@ -328,22 +328,34 @@
         </div>
 
         <!-- Modal for all institutions -->
-        <div id="all-institutions-modal"
-          class="fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center hidden">
-          <div class="bg-white p-6 rounded-lg max-w-4xl w-full max-h-[80vh] overflow-auto">
-            <h3 class="text-lg font-medium mb-4">Todas las instituciones</h3>
-            <table class="table-auto w-full">
-              <thead>
-                <tr>
-                  <th class="px-4 py-2">Nombre de la institución</th>
-                </tr>
-              </thead>
-              <tbody id="all-institutions-body">
-                <!-- Institutions will be populated here -->
-              </tbody>
-            </table>
-            <button type="button" id="close-all-institutions-modal"
-              class="mt-4 bg-primary-600 text-white px-4 py-2 rounded-md">Cerrar</button>
+        <div id="all-institutions-modal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden">
+          <div class="bg-white rounded-lg max-w-4xl w-full h-[90vh] flex flex-col">
+            <!-- Header -->
+            <div class="p-4 bg-gray-100">
+              <h3 class="text-lg font-medium">Todas las instituciones</h3>
+            </div>
+            <!-- Content -->
+            <div class="flex-grow overflow-y-auto p-4">
+              <div class="overflow-x-auto">
+                <table class="table-auto w-full">
+                  <thead class="sticky top-0 bg-gray-100">
+                    <tr>
+                      <th class="px-4 py-2 text-left">Nombre de la institución</th>
+                    </tr>
+                  </thead>
+                  <tbody id="all-institutions-body" class="divide-y divide-gray-200">
+                    <!-- Institutions will be populated here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <!-- Footer -->
+            <div class="p-4 bg-gray-100">
+              <div class="flex justify-end space-x-2">
+                <button type="button" id="close-all-institutions-modal" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors">Cerrar</button>
+                <button type="button" id="select-institution" class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors">Seleccionar institución</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -671,7 +683,8 @@
         allInstitutionsModal: document.getElementById('all-institutions-modal'),
         allInstitutionsBody: document.getElementById('all-institutions-body'),
         showAllButton: document.getElementById('show-all-institutions'),
-        requestNewButton: document.getElementById('request-new-institution')
+        requestNewButton: document.getElementById('request-new-institution'),
+        closeAllInstitutionsModal: document.getElementById('close-all-institutions-modal')
       };
 
       const missingElements = Object.entries(elements)
@@ -780,10 +793,49 @@
         populateDropdown(results.map(result => result.item));
       });
 
-      elements.showAllButton.addEventListener('click', function () {
-        populateDropdown(institutions);
-        elements.dropdown.classList.remove('hidden');
+      function showAllInstitutions() {
+        const tbody = elements.allInstitutionsBody;
+        tbody.innerHTML = '';
+        institutions.sort((a, b) => a.name.localeCompare(b.name)).forEach(institution => {
+          const row = document.createElement('tr');
+          row.classList.add('hover:bg-gray-100', 'transition-colors', 'cursor-pointer');
+          const cell = document.createElement('td');
+          cell.textContent = institution.name;
+          cell.classList.add('px-4', 'py-2');
+          row.appendChild(cell);
+          row.addEventListener('click', () => {
+            const selectedRow = tbody.querySelector('tr.selected');
+            if (selectedRow) {
+              selectedRow.classList.remove('selected', 'bg-blue-100');
+            }
+            row.classList.add('selected', 'bg-blue-100');
+          });
+          tbody.appendChild(row);
+        });
+      }
+
+      elements.showAllButton.addEventListener('click', function() {
+        showAllInstitutions(); // Populate the modal content
+        elements.allInstitutionsModal.classList.remove('hidden'); // Show the modal
       });
+
+      elements.closeAllInstitutionsModal.addEventListener('click', function() {
+        elements.allInstitutionsModal.classList.add('hidden');
+      });
+
+      const selectInstitutionButton = document.getElementById('select-institution');
+      if (selectInstitutionButton) {
+        selectInstitutionButton.addEventListener('click', () => {
+          const selectedRow = elements.allInstitutionsBody.querySelector('tr.selected');
+          if (selectedRow) {
+            const institutionName = selectedRow.querySelector('td').textContent;
+            selectInstitution({ name: institutionName, value: institutionName });
+            elements.allInstitutionsModal.classList.add('hidden');
+          } else {
+            alert('Por favor, seleccione una institución');
+          }
+        });
+      }
 
       document.addEventListener('click', function (e) {
         if (!elements.searchInput.contains(e.target) && !elements.dropdown.contains(e.target)) {
@@ -812,31 +864,9 @@
 
       // Handle new institution request
       elements.requestNewButton.addEventListener('click', function () {
-        const newInstitutionModal = document.getElementById('new-institution-modal');
-        if (newInstitutionModal) newInstitutionModal.classList.remove('hidden');
+        // TODO: Replace later with actual website.
+        window.open('https://example.com/new-institution', '_blank');
       });
-
-      const closeModalButton = document.getElementById('close-modal');
-      if (closeModalButton) {
-        closeModalButton.addEventListener('click', function () {
-          const newInstitutionModal = document.getElementById('new-institution-modal');
-          if (newInstitutionModal) newInstitutionModal.classList.add('hidden');
-        });
-      }
-
-      const newInstitutionForm = document.getElementById('new-institution-form');
-      if (newInstitutionForm) {
-        newInstitutionForm.addEventListener('submit', function (e) {
-          e.preventDefault();
-          const newInstitutionName = document.getElementById('new-institution-name');
-          if (newInstitutionName) {
-            // Here you would typically send this data to your server
-            alert(`Solicitud enviada para: ${newInstitutionName.value}`);
-            const newInstitutionModal = document.getElementById('new-institution-modal');
-            if (newInstitutionModal) newInstitutionModal.classList.add('hidden');
-          }
-        });
-      }
     };
 
     // Initialize form
