@@ -32,9 +32,6 @@
             <select id="nationality" name="nationality" autocomplete="country-name" required
               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:max-w-xs sm:text-sm sm:leading-6">
               <option value="">Seleccione una nacionalidad</option>
-              <option value="PY">Paraguay</option>
-              <option value="AR">Argentina</option>
-              <option value="BR">Brasil</option>
               <!-- Add more nationalities as needed -->
             </select>
             <span id="nationality-error" class="mt-2 text-sm text-red-500 hidden"></span>
@@ -321,6 +318,7 @@
             <div id="institution-name-dropdown"
               class="absolute z-10 w-full mt-1 bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm hidden">
             </div>
+            <input type="hidden" id="institution-name" name="institution-name">
           </div>
           <span id="institution-name-error" class="mt-2 text-sm text-red-500 hidden"></span>
           <button id="show-all-institutions" type="button" class="mt-2 text-sm text-primary-600">Mostrar todas las
@@ -331,7 +329,7 @@
 
         <!-- Modal for all institutions -->
         <div id="all-institutions-modal"
-          class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden">
+          class="fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center hidden">
           <div class="bg-white p-6 rounded-lg max-w-4xl w-full max-h-[80vh] overflow-auto">
             <h3 class="text-lg font-medium mb-4">Todas las instituciones</h3>
             <table class="table-auto w-full">
@@ -351,7 +349,7 @@
 
         <!-- Modal para solicitar nueva institución -->
         <div id="new-institution-modal"
-          class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden">
+          class="fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center hidden">
           <div class="bg-white p-6 rounded-lg">
             <h3 class="text-lg font-medium mb-4">Solicitar nueva institución</h3>
             <form id="new-institution-form">
@@ -595,6 +593,10 @@
 <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    // Global variables
+    let institutions = [];
+    let institutionData, geographicData, nationalityData;
+
     // Load JSON data
     const loadJSON = async (url) => {
       try {
@@ -623,7 +625,7 @@
     };
 
     // Handle geographic selection
-    const handleGeographicSelection = (geographicData) => {
+    const handleGeographicSelection = () => {
       if (!geographicData || !geographicData.paraguay) {
         console.error('Invalid geographic data');
         return;
@@ -656,22 +658,32 @@
     };
 
     // Handle institution selection
-    const handleInstitutionSelection = (institutionData) => {
+    const handleInstitutionSelection = () => {
       if (!institutionData) {
         console.error('Invalid institution data');
         return;
       }
-      const searchInput = document.getElementById('institution-name-search');
-      const dropdown = document.getElementById('institution-name-dropdown');
-      const allInstitutionsModal = document.getElementById('all-institutions-modal');
-      const allInstitutionsBody = document.getElementById('all-institutions-body');
 
-      if (!searchInput || !dropdown || !allInstitutionsModal || !allInstitutionsBody) {
-        console.error('One or more required elements for institution selection not found');
+      const elements = {
+        searchInput: document.getElementById('institution-name-search'),
+        dropdown: document.getElementById('institution-name-dropdown'),
+        hiddenInput: document.getElementById('institution-name'),
+        allInstitutionsModal: document.getElementById('all-institutions-modal'),
+        allInstitutionsBody: document.getElementById('all-institutions-body'),
+        showAllButton: document.getElementById('show-all-institutions'),
+        requestNewButton: document.getElementById('request-new-institution')
+      };
+
+      const missingElements = Object.entries(elements)
+        .filter(([, element]) => !element)
+        .map(([name]) => name);
+
+      if (missingElements.length > 0) {
+        console.error('The following required elements for institution selection are missing:', missingElements.join(', '));
         return;
       }
 
-      const institutions = Object.keys(institutionData).map(inst => ({
+      institutions = Object.keys(institutionData).map(inst => ({
         name: inst,
         value: inst
       }));
@@ -684,84 +696,55 @@
         useExtendedSearch: true
       });
 
-      searchInput.addEventListener('input', function () {
-        const results = fuse.search(this.value);
-        dropdown.innerHTML = '';
-        dropdown.classList.remove('hidden');
-
-        results.forEach(result => {
+      function populateDropdown(items) {
+        elements.dropdown.innerHTML = '';
+        items.forEach((item) => {
           const div = document.createElement('div');
-          div.textContent = result.item.name;
+          div.textContent = item.name;
           div.classList.add('cursor-pointer', 'select-none', 'relative', 'py-2', 'pl-3', 'pr-9', 'hover:bg-primary-600', 'hover:text-white');
-          div.setAttribute('tabindex', '0');
-          div.addEventListener('click', function () {
-            searchInput.value = result.item.name;
-            institutionSelect.value = result.item.value;
-            dropdown.classList.add('hidden');
-            searchInput.classList.add('ring-2', 'ring-green-500');
-            updateFacultySelect(institutionData[result.item.value]);
-          });
-          dropdown.appendChild(div);
+          div.addEventListener('click', () => selectInstitution(item));
+          elements.dropdown.appendChild(div);
         });
-
-        if (results.length === 0) {
-          dropdown.classList.add('hidden');
+        if (items.length > 0) {
+          elements.dropdown.classList.remove('hidden');
+        } else {
+          elements.dropdown.classList.add('hidden');
         }
-      });
+      }
 
-      document.getElementById('show-all-institutions').addEventListener('click', function () {
-        allInstitutionsBody.innerHTML = '';
-        institutions.forEach(institution => {
-          const row = document.createElement('tr');
-          const cell = document.createElement('td');
-          cell.textContent = institution.name;
-          cell.classList.add('px-4', 'py-2', 'cursor-pointer', 'hover:bg-gray-100');
-          cell.addEventListener('click', function () {
-            searchInput.value = institution.name;
-            institutionSelect.value = institution.value;
-            allInstitutionsModal.classList.add('hidden');
-            searchInput.classList.add('ring-2', 'ring-green-500');
-            updateFacultySelect(institutionData[institution.value]);
-          });
-          row.appendChild(cell);
-          allInstitutionsBody.appendChild(row);
-        });
-        allInstitutionsModal.classList.remove('hidden');
-      });
+      function selectInstitution(institution) {
+        elements.searchInput.value = institution.name;
+        elements.hiddenInput.value = institution.value;
+        elements.searchInput.classList.add('ring-2', 'ring-green-500');
+        elements.dropdown.classList.add('hidden');
+        updateFacultySelect(institution.value);
+      }
 
-      document.getElementById('close-all-institutions-modal').addEventListener('click', function () {
-        allInstitutionsModal.classList.add('hidden');
-      });
+      function updateFacultySelect(institutionName) {
+        const facultySelect = document.getElementById('campus-faculty');
+        const careerSelect = document.getElementById('specific-unit-career');
 
-      document.addEventListener('click', function (e) {
-        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
-          dropdown.classList.add('hidden');
+        if (!facultySelect || !careerSelect) {
+          console.error('Faculty or career select element not found');
+          return;
         }
-      });
 
-      institutionSelect.addEventListener('change', () => {
-        updateFacultySelect(institutionData[institutionSelect.value]);
-      });
+        const selectedInstitution = institutionData[institutionName];
 
-      facultySelect.addEventListener('change', () => {
-        updateCareerSelect(institutionData[institutionSelect.value][facultySelect.value]);
-      });
-
-      searchInput.addEventListener('change', function () {
-        if (this.value === '') {
-          this.classList.remove('ring-2', 'ring-green-500');
-        }
-      });
-
-      function updateFacultySelect(selectedInstitution) {
         if (selectedInstitution) {
-          populateSelect('campus-faculty', Object.keys(selectedInstitution).map(fac => ({
+          const faculties = Object.keys(selectedInstitution);
+          populateSelect('campus-faculty', faculties.map(fac => ({
             value: fac,
             text: fac
           })).sort((a, b) => a.text.localeCompare(b.text)), "Seleccione una facultad");
+
           facultySelect.disabled = false;
           careerSelect.innerHTML = '<option value="">Seleccione una carrera</option>';
           careerSelect.disabled = true;
+
+          facultySelect.addEventListener('change', function () {
+            updateCareerSelect(institutionName, this.value);
+          });
         } else {
           facultySelect.innerHTML = '<option value="">Seleccione una facultad</option>';
           facultySelect.disabled = true;
@@ -770,7 +753,16 @@
         }
       }
 
-      function updateCareerSelect(selectedFaculty) {
+      function updateCareerSelect(institutionName, facultyName) {
+        const careerSelect = document.getElementById('specific-unit-career');
+
+        if (!careerSelect) {
+          console.error('Career select element not found');
+          return;
+        }
+
+        const selectedFaculty = institutionData[institutionName][facultyName];
+
         if (selectedFaculty) {
           populateSelect('specific-unit-career', selectedFaculty.map(career => ({
             value: career,
@@ -782,137 +774,75 @@
           careerSelect.disabled = true;
         }
       }
-    };
 
-    const searchInput = document.getElementById('institution-name-search');
-    const dropdown = document.getElementById('institution-name-dropdown');
-    const hiddenInput = document.getElementById('institution-name');
-    const dropdownButton = document.getElementById('dropdown-button');
-    const showAllButton = document.getElementById('show-all-institutions');
-    const requestNewButton = document.getElementById('request-new-institution');
-
-    if (!searchInput || !dropdown || !hiddenInput || !dropdownButton || !showAllButton || !requestNewButton) return; // Guard clause if elements don't exist
-
-    let institutions = []; // This will be populated from your JSON data
-    let isOpen = false;
-
-    // Populate institutions array from your JSON data
-    const loadInstitutions = async () => {
-      const response = await fetch('data/INSTITUCIONES_2023_NEW.json');
-      const data = await response.json();
-      institutions = Object.keys(data).map(inst => ({
-        name: inst,
-        value: inst
-      }));
-    };
-
-    loadInstitutions();
-
-    const fuse = new Fuse(institutions, {
-      keys: ['name'],
-      threshold: 0.3,
-      ignoreLocation: true,
-      ignoreFieldNorm: true,
-      useExtendedSearch: true
-    });
-
-    function toggleDropdown() {
-      isOpen = !isOpen;
-      dropdown.classList.toggle('hidden', !isOpen);
-    }
-
-    dropdownButton.addEventListener('click', toggleDropdown);
-
-    searchInput.addEventListener('input', function () {
-      const results = fuse.search(this.value);
-      populateDropdown(results.map(result => result.item));
-    });
-
-    function populateDropdown(items) {
-      dropdown.innerHTML = '';
-      items.forEach((item) => {
-        const div = document.createElement('div');
-        div.textContent = item.name;
-        div.classList.add('cursor-pointer', 'select-none', 'relative', 'py-2', 'pl-3', 'pr-9', 'hover:bg-primary-600', 'hover:text-white');
-        div.addEventListener('click', () => selectInstitution(item));
-        dropdown.appendChild(div);
+      elements.searchInput.addEventListener('input', function () {
+        const results = fuse.search(this.value);
+        populateDropdown(results.map(result => result.item));
       });
-      if (items.length > 0) {
-        dropdown.classList.remove('hidden');
-      } else {
-        dropdown.classList.add('hidden');
-      }
-    }
 
-    function selectInstitution(institution) {
-      searchInput.value = institution.name;
-      hiddenInput.value = institution.value;
-      searchInput.classList.add('ring-2', 'ring-green-500');
-      dropdown.classList.add('hidden');
-    }
+      elements.showAllButton.addEventListener('click', function () {
+        populateDropdown(institutions);
+        elements.dropdown.classList.remove('hidden');
+      });
 
-    showAllButton.addEventListener('click', function () {
-      populateDropdown(institutions);
-      dropdown.classList.remove('hidden');
-    });
-
-    document.addEventListener('click', function (e) {
-      if (!searchInput.contains(e.target) && !dropdown.contains(e.target) && !dropdownButton.contains(e.target)) {
-        dropdown.classList.add('hidden');
-      }
-    });
-
-    // Add keyboard navigation
-    searchInput.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        const items = dropdown.querySelectorAll('div');
-        const currentIndex = Array.from(items).findIndex(item => item === document.activeElement);
-        let nextIndex;
-        if (e.key === 'ArrowDown') {
-          nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
-        } else {
-          nextIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+      document.addEventListener('click', function (e) {
+        if (!elements.searchInput.contains(e.target) && !elements.dropdown.contains(e.target)) {
+          elements.dropdown.classList.add('hidden');
         }
-        items[nextIndex].focus();
-      } else if (e.key === 'Enter' && document.activeElement !== searchInput) {
-        e.preventDefault();
-        document.activeElement.click();
-      }
-    });
-
-    // Handle new institution request
-    requestNewButton.addEventListener('click', function () {
-      const newInstitutionModal = document.getElementById('new-institution-modal');
-      if (newInstitutionModal) newInstitutionModal.classList.remove('hidden');
-    });
-
-    const closeModalButton = document.getElementById('close-modal');
-    if (closeModalButton) {
-      closeModalButton.addEventListener('click', function () {
-        const newInstitutionModal = document.getElementById('new-institution-modal');
-        if (newInstitutionModal) newInstitutionModal.classList.add('hidden');
       });
-    }
 
-    const newInstitutionForm = document.getElementById('new-institution-form');
-    if (newInstitutionForm) {
-      newInstitutionForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const newInstitutionName = document.getElementById('new-institution-name');
-        if (newInstitutionName) {
-          // Here you would typically send this data to your server
-          alert(`Solicitud enviada para: ${newInstitutionName.value}`);
+      // Add keyboard navigation
+      elements.searchInput.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          const items = elements.dropdown.querySelectorAll('div');
+          const currentIndex = Array.from(items).findIndex(item => item === document.activeElement);
+          let nextIndex;
+          if (e.key === 'ArrowDown') {
+            nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
+          } else {
+            nextIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+          }
+          items[nextIndex].focus();
+        } else if (e.key === 'Enter' && document.activeElement !== elements.searchInput) {
+          e.preventDefault();
+          document.activeElement.click();
+        }
+      });
+
+      // Handle new institution request
+      elements.requestNewButton.addEventListener('click', function () {
+        const newInstitutionModal = document.getElementById('new-institution-modal');
+        if (newInstitutionModal) newInstitutionModal.classList.remove('hidden');
+      });
+
+      const closeModalButton = document.getElementById('close-modal');
+      if (closeModalButton) {
+        closeModalButton.addEventListener('click', function () {
           const newInstitutionModal = document.getElementById('new-institution-modal');
           if (newInstitutionModal) newInstitutionModal.classList.add('hidden');
-        }
-      });
-    }
+        });
+      }
+
+      const newInstitutionForm = document.getElementById('new-institution-form');
+      if (newInstitutionForm) {
+        newInstitutionForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          const newInstitutionName = document.getElementById('new-institution-name');
+          if (newInstitutionName) {
+            // Here you would typically send this data to your server
+            alert(`Solicitud enviada para: ${newInstitutionName.value}`);
+            const newInstitutionModal = document.getElementById('new-institution-modal');
+            if (newInstitutionModal) newInstitutionModal.classList.add('hidden');
+          }
+        });
+      }
+    };
 
     // Initialize form
     const initForm = async () => {
       try {
-        const [institutionData, geographicData, nationalityData] = await Promise.all([
+        [institutionData, geographicData, nationalityData] = await Promise.all([
           loadJSON('data/INSTITUCIONES_2023_NEW.json'),
           loadJSON('data/REGION_CIUDAD.json'),
           loadJSON('data/nacionalidades.json')
@@ -922,8 +852,8 @@
           throw new Error('Failed to load one or more required data files');
         }
 
-        handleGeographicSelection(geographicData);
-        handleInstitutionSelection(institutionData);
+        handleGeographicSelection();
+        handleInstitutionSelection();
 
         // Populate nationalities
         if (nationalityData.paises) {
@@ -962,7 +892,7 @@
       const requiredFields = [
         'first-name', 'last-name', 'nationality', 'id-number', 'birth-year',
         'birth-month', 'birth-day', 'mobile-phone', 'department', 'city',
-        'institutional-email', 'institution-name', 'campus-faculty',
+        'institutional-email', 'institution-name-search', 'campus-faculty',
         'specific-unit-career', 'institutional-role'
       ];
 
