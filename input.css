@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom style */
+#all-institutions-modal .bg-white {
+    max-height: 80vh;
+    overflow-y: auto;
+}
