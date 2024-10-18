@@ -27,6 +27,7 @@ function copyDir(src, dest) {
 // Copy necessary files and directories
 copyDir("./components", path.join(distDir, "components"));
 copyDir("./data", path.join(distDir, "data"));
+copyDir("./img", path.join(distDir, "data"));
 copyDir("./lib", path.join(distDir, "lib"));
 
 fs.copyFileSync("./index.php", path.join(distDir, "index.php"));
