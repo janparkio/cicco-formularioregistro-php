@@ -749,6 +749,40 @@ select {
   outline: 1px auto -webkit-focus-ring-color;
 }
 
+.container {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
+  }
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -816,6 +850,10 @@ select {
 
 .mb-4 {
   margin-bottom: 1rem;
+}
+
+.mb-8 {
+  margin-bottom: 2rem;
 }
 
 .ml-2 {
@@ -1136,6 +1174,11 @@ select {
   background-color: rgb(107 114 128 / var(--tw-bg-opacity));
 }
 
+.bg-primary-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(166 110 199 / var(--tw-bg-opacity));
+}
+
 .bg-primary-600 {
   --tw-bg-opacity: 1;
   background-color: rgb(139 79 170 / var(--tw-bg-opacity));
@@ -1149,6 +1192,11 @@ select {
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+
+.bg-primary-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(115 63 140 / var(--tw-bg-opacity));
 }
 
 .bg-opacity-75 {
@@ -1205,6 +1253,11 @@ select {
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
+}
+
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
 .pl-3 {

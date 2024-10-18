@@ -55,6 +55,18 @@
             <?php include "components/form-front.php"; ?>
         </section>
     </main>
+    <footer class="bg-primary-700 py-8">
+  <div class="container mx-auto px-4">
+    <div class="flex justify-center mb-8">
+      <img 
+        src="https://cicco.conacyt.gov.py/wp-content/uploads/2024/02/footer-cicco2024.svg" 
+        alt="Cicco 2024" 
+        class="w-full max-w-3xl h-auto"
+        loading="lazy"
+        decoding="async"
+      >
+    </div>
+</footer>
 </body>
 
 </html>
