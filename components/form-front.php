@@ -1,4 +1,4 @@
-<form id="registration-form" action="javascript:void(0);">
+<form id="registration-form">
   <div class="space-y-12">
     <div>
       <h2 class="text-base font-semibold leading-7 text-gray-900">Información Personal</h2>
@@ -297,7 +297,8 @@
 
         <!-- Correo electrónico institucional -->
         <div class="col-span-6 sm:col-span-4">
-          <label for="institutional-email" class="block text-sm font-medium leading-6 text-gray-900">Correo electrónico</label>
+          <label for="institutional-email" class="block text-sm font-medium leading-6 text-gray-900">Correo
+            electrónico</label>
           <div class="mt-2">
             <input type="email" name="institutional-email" id="institutional-email" autocomplete="email" required
               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
@@ -362,7 +363,7 @@
         </div>
 
         <!-- Modal para solicitar nueva institución -->
-        <!-- <div id="new-institution-modal"
+        <div id="new-institution-modal"
           class="fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center hidden">
           <div class="bg-white p-6 rounded-lg">
             <h3 class="text-lg font-medium mb-4">Solicitar nueva institución</h3>
@@ -375,7 +376,7 @@
               <button type="button" id="close-modal" class="mt-4 ml-2 text-gray-600">Cancelar</button>
             </form>
           </div>
-        </div> -->
+        </div>
 
         <!-- Sede o Facultad -->
         <div class="col-span-6 sm:col-span-3">
@@ -607,29 +608,43 @@
         </div>
       </div>
 
-      <!-- Mensaje de Error Logic -->
-      <div id="form-error-message"
-        class="hidden bg-red-100 mt-10 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-        <strong class="font-bold">Hubo un error, contacte a soporte.</strong>
-        <p class="block sm:inline" id="error-text"></p>
-      </div>
+      <!-- Patcha Challange - Hidden -->
+      <input type="hidden" name="captcha_challenge" id="captcha_challenge">
 
-      <div class="mt-6 flex items-center justify-end gap-x-6">
-        <!-- <button type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</button> -->
-        <!-- Indicador de carga - loading -->
-        <div id="loading-indicator" class="hidden">
-             <svg class="animate-spin h-5 w-5 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-             </svg>
-             <span class="ml-2">Enviando...</span>
-           </div>
-        <button type="submit"
-          class="rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">Enviar
-          solicitud de creación</button>
-      </div> <!-- Cierre de la grid principal -->
-    </div> <!-- Cierre del primer contenedor 'space-y-12' -->
-</form> <!-- Cierre del formulario -->
+      <!-- Error message - Logic -->
+       <div id="form-error-message"
+         class="hidden bg-red-100 mt-10 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+         <strong class="font-bold">Hubo un error, contacte a soporte.</strong>
+         <p class="block sm:inline" id="error-text"></p>
+       </div>
+
+      <!-- Success message - Logic -->
+        <div id="form-success-message"
+          class="hidden bg-green-100 mt-10 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+          <strong class="font-bold">Envío exitoso</strong>
+          <p class="block sm:inline" id="success-text"></p>
+        </div>
+
+        <!-- Submit button and loading indicator -->
+        <div class="mt-6 flex items-center justify-end gap-x-6">
+          <!-- Loading indicator -->
+          <div id="loading-indicator" class="hidden flex items-center">
+            <svg class="animate-spin h-5 w-5 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+              </path>
+            </svg>
+            <span class="ml-2">Enviando...</span>
+          </div>
+          <!-- Submit button -->
+          <button type="submit"
+            class="rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
+            Enviar solicitud de creación
+          </button>
+        </div>
+      </form>
 
 <!-- Form Main Logic -->
 <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
@@ -669,7 +684,7 @@
 
     // Handle geographic selection
     const handleGeographicSelection = () => {
-      if (!geographicData || !geographicData.paraguay) {
+      if (!geographicData || !geographicData.pais) {
         console.error('Invalid geographic data');
         return;
       }
@@ -680,13 +695,13 @@
         return;
       }
 
-      populateSelect('department', geographicData.paraguay.map(region => ({
+      populateSelect('department', geographicData.pais.map(region => ({
         value: region.nombre_region,
         text: region.nombre_region
       })).sort((a, b) => a.text.localeCompare(b.text)));
 
       departmentSelect.addEventListener('change', () => {
-        const selectedDepartment = geographicData.paraguay.find(region => region.nombre_region === departmentSelect.value);
+        const selectedDepartment = geographicData.pais.find(region => region.nombre_region === departmentSelect.value);
         if (selectedDepartment) {
           populateSelect('city', selectedDepartment.ciudades.map(city => ({
             value: city.ciudad,
