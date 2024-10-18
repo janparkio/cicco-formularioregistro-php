@@ -1,0 +1,1090 @@
+{
+  "paraguay": [
+    {
+      "nombre_region": "Asunción",
+      "ciudades": [
+        {
+          "ciudad": "Asunción",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Concepción",
+      "ciudades": [
+        {
+          "ciudad": "Concepción",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Belén",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Horqueta",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Loreto",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Carlos del Apa",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Lázaro",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Yby Yaú",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Azote'y",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Sargento José Félix López",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Alfredo",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Paso Barreto",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "San Pedro",
+      "ciudades": [
+        {
+          "ciudad": "San Pedro del Ycuamandyjú",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Antequera",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Choré",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "General Elizardo Aquino",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Itacurubí del Rosario",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Lima",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Nueva Germania",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Estanislao",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Pablo",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Tacuatí",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Unión",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "25 de Diciembre",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Villa del Rosario",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "General Francisco Isidoro Resquín",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Yataity del Norte",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Guajayvi",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Capiibary",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Santa Rosa del Aguaray",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Yrybucua",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Liberación",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Cordillera",
+      "ciudades": [
+        {
+          "ciudad": "Caacupé",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Altos",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Arroyos y Esteros",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Atyrá",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Caraguatay",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Emboscada",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Eusebio Ayala",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Isla Pucú",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Itacurubí de la Cordillera",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Juan de Mena",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Loma Grande",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Mbocayaty del Yhaguy",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Nueva Colombia",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Piribebuy",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Primero de Marzo",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Bernardino",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Santa Elena",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Tobatí",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Valenzuela",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Jose Obrero",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Guairá",
+      "ciudades": [
+        {
+          "ciudad": "Villarrica",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Borja",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Capitán Mauricio José Troche",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Coronel Martínez",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Félix Pérez Cardozo",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Gral. Eugenio A. Garay",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Independencia",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Itapé",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Iturbe",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "José Fassardi",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Mbocayaty",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Natalicio Talavera",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Ñumí",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Salvador",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Yataity",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Doctor Bottrell",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Paso Yobai",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Tebicuary",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Caaguazú",
+      "ciudades": [
+        {
+          "ciudad": "Coronel Oviedo",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Caaguazú",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Carayaó",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Dr. Cecilio Báez",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Santa Rosa del Mbutuy",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Dr. Juan Manuel Frutos",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Repatriación",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Nueva Londres",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Joaquín",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San José de los Arroyos",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Yhú",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Dr. J. Eulogio Estigarribia",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "R.I. 3 Corrales",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Raúl Arsenio Oviedo",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "José Domingo Ocampos",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Mariscal Francisco Solano López",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "La Pastora",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "3 de Febrero",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Simón Bolivar",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Vaquería",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Tembiaporá",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Nueva Toledo",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Caazapá",
+      "ciudades": [
+        {
+          "ciudad": "Caazapá",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Abaí",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Buena Vista",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Dr. Moisés S. Bertoni",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Gral. Higinio Morinigo",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Maciel",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Juan Nepomuceno",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Tavaí",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Yegros",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Yuty",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "3 de Mayo",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Itapúa",
+      "ciudades": [
+        {
+          "ciudad": "Encarnación",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Bella Vista",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Cambyretá",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Capitán Meza",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Capitán Miranda",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Nueva Alborada",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Carmen del Paraná",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Coronel Bogado",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Carlos Antonio López",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Natalio",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Fram",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "General Artigas",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "General Delgado",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Hohenau",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Jesús",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "José Leandro Oviedo",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Obligado",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Mayor Julio Dionisio Otaño",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Cosme y Damian",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Pedro del Paraná",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Rafael del Paraná",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Trinidad",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "EdeliraTomás Romero Pereira",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Alto Verá",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "La Paz",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Yatytay",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Juan del Paraná",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Pirapó",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Itapúa Poty",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Misiones",
+      "ciudades": [
+        {
+          "ciudad": "San Juan Bautista de las Misiones",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Ayolas",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Ignacio",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Miguel",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Patricio",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Santa María",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Santa Rosa",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Santiago",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Villa Florida",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Yabebyry",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Paraguarí",
+      "ciudades": [
+        {
+          "ciudad": "Paraguarí",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Acahay",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Caapucú",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Caballero",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Carapeguá",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Escobar",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "La Colmena",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Mbuyapey",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Pirayú",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Quiindy",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Quyquyhó",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Roque Gonzalez de Santacruz",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Sapucái",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Tebicuary-mí",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Yaguarón",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Ybycuí",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Ybytymí",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Alto Paraná",
+      "ciudades": [
+        {
+          "ciudad": "Ciudad del Este",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Presidente Franco",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Domingo Martínez de Irala",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Dr. Juan León Mallorquín",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Hernandarias",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Itakyry",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Juan E. O'Leary",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Ñacunday",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Yguazú",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Los Cedrales",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Minga Guazú",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Cristobal",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Santa Rita",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Naranjal",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Santa Rosa del Monday",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Minga Porá",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Mbaracayú",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Alberto",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Iruña",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Santa Fe del Paraná",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Tavapy",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Dr. Raúl Peña",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Central",
+      "ciudades": [
+        {
+          "ciudad": "Areguá",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Capiatá",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Fernando de la Mora",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Guarambaré",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Itá",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Itauguá",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Lambaré",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Limpio",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Luque",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Mariano Roque Alonso",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Nueva Italia",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Ñemby",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Antonio",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Lorenzo",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Villa Elisa",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Villeta",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Ypacaraí",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Ypané",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "J. Augusto Saldivar",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Ñeembucú",
+      "ciudades": [
+        {
+          "ciudad": "Pilar",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Alberdi",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Cerrito",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Desmochados",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Gral. José Eduvigis Díaz",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Guazú-Cuá",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Humaitá",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Isla Umbú",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Laureles",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Mayor José Dejesús Martínez",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Paso de Patria",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "San Juan Bautista de Ñeembucú",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Tacuaras",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Villa Franca",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Villa Oliva",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Villalbín",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Amambay",
+      "ciudades": [
+        {
+          "ciudad": "Pedro Juan Caballero",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Bella Vista",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Capitán Bado",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Zanja Pytã",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Karapaí",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Canindeyú",
+      "ciudades": [
+        {
+          "ciudad": "Salto del Guairá",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Corpus Christi",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Villa Curuguaty",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Villa Ygatimí",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Itanará",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Ypehú",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Francisco Caballero Alvarez",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Katueté",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "La Paloma del Espíritu Santo",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Nueva Esperanza",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Yasy Kañy",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Yvyrarovaná",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Yvy Pytá",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Presidente Hayes",
+      "ciudades": [
+        {
+          "ciudad": "Benjamín Aceval",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Puerto Pinasco",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Villa Hayes",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Nanawa",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "José Falcón",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Tte. 1° Manuel Irala Fernández",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Teniente Esteban Martínez",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "General José María Bruguez",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Boquerón",
+      "ciudades": [
+        {
+          "ciudad": "Mariscal José Félix Estigarribia",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Filadelfia",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Loma Plata",
+          "zipcode": "0000"
+        }
+      ]
+    },
+    {
+      "nombre_region": "Alto Paraguay",
+      "ciudades": [
+        {
+          "ciudad": "Fuerte Olimpo",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Puerto Casado",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Bahía Negra",
+          "zipcode": "0000"
+        },
+        {
+          "ciudad": "Carmelo Peralta",
+          "zipcode": "0000"
+        }
+      ]
+    }
+  ]
+}
