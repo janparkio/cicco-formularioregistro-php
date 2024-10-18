@@ -1,4 +1,4 @@
-<form id="registration-form">
+<form id="registration-form" method="post" action="process_form.php">
   <div class="space-y-12">
     <div>
       <h2 class="text-base font-semibold leading-7 text-gray-900">Información Personal</h2>
