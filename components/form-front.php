@@ -1,4 +1,4 @@
-<form id="registration-form">
+<form id="registration-form" action="javascript:void(0);">
   <div class="space-y-12">
     <div>
       <h2 class="text-base font-semibold leading-7 text-gray-900">Información Personal</h2>
@@ -32,7 +32,6 @@
             <select id="nationality" name="nationality" autocomplete="country-name" required
               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:max-w-xs sm:text-sm sm:leading-6">
               <option value="">Seleccione una nacionalidad</option>
-              <!-- Add more nationalities as needed -->
             </select>
             <span id="nationality-error" class="mt-2 text-sm text-red-500 hidden"></span>
           </div>
@@ -47,7 +46,7 @@
               title="Ingrese un número de cédula válido (6 a 10 dígitos)"
               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 peer">
             <span id="id-validation" class="mt-2 text-sm text-red-500 hidden">
-              El número de cédula debe tener entre 6 y 10 dígitos.
+              El número de cédula o DNI debe tener entre 5 y 15 dígitos.
             </span>
             <span id="id-number-error" class="mt-2 text-sm text-red-500 hidden"></span>
           </div>
@@ -328,7 +327,8 @@
         </div>
 
         <!-- Modal for all institutions -->
-        <div id="all-institutions-modal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden">
+        <div id="all-institutions-modal"
+          class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden">
           <div class="bg-white rounded-lg max-w-4xl w-full h-[90vh] flex flex-col">
             <!-- Header -->
             <div class="p-4 bg-gray-100">
@@ -352,8 +352,11 @@
             <!-- Footer -->
             <div class="p-4 bg-gray-100">
               <div class="flex justify-end space-x-2">
-                <button type="button" id="close-all-institutions-modal" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors">Cerrar</button>
-                <button type="button" id="select-institution" class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors">Seleccionar institución</button>
+                <button type="button" id="close-all-institutions-modal"
+                  class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors">Cerrar</button>
+                <button type="button" id="select-institution"
+                  class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors">Seleccionar
+                  institución</button>
               </div>
             </div>
           </div>
@@ -367,7 +370,7 @@
             <form id="new-institution-form">
               <input type="text" id="new-institution-name"
                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-                placeholder="Nombre de la institución" required>
+                placeholder="Nombre de la institución">
               <button type="submit" class="mt-4 bg-primary-600 text-white px-4 py-2 rounded-md">Enviar
                 solicitud</button>
               <button type="button" id="close-modal" class="mt-4 ml-2 text-gray-600">Cancelar</button>
@@ -419,13 +422,14 @@
             <span id="institutional-role-error" class="mt-2 text-sm text-red-500 hidden"></span>
           </div>
         </div>
-      </div>
-      <div class="border-t border-gray-900/10 pt-12 mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+
+        <!-- Inicio de la sección de información de investigadores -->
         <div class="col-span-6">
           <h3 class="text-base font-semibold leading-7 text-gray-900">Información de Investigadores</h3>
           <p class="mt-1 text-sm leading-6 text-gray-600">Por favor, proporcione la información de su actividad
             investigativa.</p>
         </div>
+
         <!-- Categoría en el PRONII -->
         <div class="col-span-6 sm:col-span-3">
           <label for="pronii-category" class="block text-sm font-medium leading-6 text-gray-900">Categoría en el
@@ -466,7 +470,7 @@
           </div>
         </div>
 
-        <!-- ID de WoS (Web of Science) -->
+        <!-- ID de WoS -->
         <div class="col-span-6 sm:col-span-3">
           <label for="wos-id" class="block text-sm font-medium leading-6 text-gray-900">ID de WoS (Web of
             Science)</label>
@@ -477,18 +481,28 @@
           </div>
         </div>
 
-        <div class="col-span-6">
-          <div id="hint-message" class="flex items-center bg-blue-500 text-white text-sm font-bold px-4 py-3"
-            role="alert" style="display:none;">
-            <svg class="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-              <path
-                d="M12.432 0c1.34 0 2.01.912 2.01 1.957 0 1.305-1.164 2.512-2.679 2.512-1.269 0-2.009-.75-1.974-1.99C9.789 1.436 10.67 0 12.432 0zM8.309 20c-1.058 0-1.833-.652-1.093-3.524l1.214-5.092c.211-.814.246-1.141 0-1.141-.317 0-1.689.562-2.502 1.117l-.528-.88c2.572-2.186 5.531-3.467 6.801-3.467 1.057 0 1.233 1.273.705 3.23l-1.391 5.352c-.246.945-.141 1.271.106 1.271.317 0 1.357-.392 2.379-1.207l.6.814C12.098 19.02 9.365 20 8.309 20z" />
-            </svg>
-            <p>Como asumimos que no eres un investigador, hemos configurado tu categoría PRONII a 'Ninguna' y dejamos
-              vacíos los IDs de ORCID, Scopus, y WoS.</p>
+        <!-- Investigadores: Mensaje de información -->
+        <div id="hint-message" class="col-span-6 bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4"
+          style="display: none;">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                  d="M9 9a1 1 0 112 0v5a1 1 0 11-2 0V9zM10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0 1 1 0 002 0z"
+                  clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-blue-700">
+                Como asumimos que no eres un investigador, hemos configurado tu categoría PRONII a 'Ninguna' y dejamos
+                vacíos los IDs de ORCID, Scopus, y WoS.
+              </p>
+              <button id="show-fields" type="button" class="mt-2 text-sm font-medium text-blue-700 hover:text-blue-600">
+                Sí, tengo esos datos.
+              </button>
+            </div>
           </div>
-          <button id="show-fields" type="button" class="text-sm font-semibold leading-6 text-gray-900"
-            style="display:none;">Si tengo esos datos</button>
         </div>
 
         <script>
@@ -545,44 +559,46 @@
           <label class="block text-sm font-medium leading-6 text-gray-900">Área principal de investigación</label>
           <div class="mt-2 space-y-2">
             <div class="flex items-center">
-              <input id="ciencias-naturales" name="research-area" type="checkbox" value="ciencias-naturales" required
+              <input id="ciencias-naturales" name="research-area" type="checkbox" value="ciencias-naturales"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
               <label for="ciencias-naturales" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ciencias
                 Naturales</label>
             </div>
             <div class="flex items-center">
               <input id="ingenieria-tecnologia" name="research-area" type="checkbox" value="ingenieria-tecnologia"
-                required class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
+                class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
               <label for="ingenieria-tecnologia"
-                class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ingeniería y Tecnología</label>
+                class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ingeniería
+                y Tecnología</label>
             </div>
             <div class="flex items-center">
               <input id="ciencias-medicas-salud" name="research-area" type="checkbox" value="ciencias-medicas-salud"
-                required class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
+                class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
               <label for="ciencias-medicas-salud"
-                class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ciencias Médicas y de la Salud</label>
+                class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ciencias
+                Médicas y de la Salud</label>
             </div>
             <div class="flex items-center">
               <input id="ciencias-agricolas-veterinarias" name="research-area" type="checkbox"
-                value="ciencias-agricolas-veterinarias" required
+                value="ciencias-agricolas-veterinarias"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
               <label for="ciencias-agricolas-veterinarias"
                 class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ciencias Agrícolas y Veterinarias</label>
             </div>
             <div class="flex items-center">
-              <input id="ciencias-sociales" name="research-area" type="checkbox" value="ciencias-sociales" required
+              <input id="ciencias-sociales" name="research-area" type="checkbox" value="ciencias-sociales"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
               <label for="ciencias-sociales" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ciencias
                 Sociales</label>
             </div>
             <div class="flex items-center">
-              <input id="humanidades-artes" name="research-area" type="checkbox" value="humanidades-artes" required
+              <input id="humanidades-artes" name="research-area" type="checkbox" value="humanidades-artes"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
               <label for="humanidades-artes" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Humanidades
                 y Artes</label>
             </div>
             <div class="flex items-center">
-              <input id="otras-areas" name="research-area" type="checkbox" value="otras-areas" required
+              <input id="otras-areas" name="research-area" type="checkbox" value="otras-areas"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
               <label for="otras-areas" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Otras
                 áreas</label>
@@ -592,17 +608,25 @@
         </div>
       </div>
 
+      <!-- Mensaje de Error Logic -->
+      <div id="form-error-message"
+        class="hidden bg-red-100 mt-10 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <strong class="font-bold">Hubo un error, contacte a soporte.</strong>
+        <p class="block sm:inline" id="error-text"></p>
+      </div>
+
       <div class="mt-6 flex items-center justify-end gap-x-6">
-        <button type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</button>
+        <!-- <button type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</button> -->
         <button type="submit"
           class="rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">Enviar
           solicitud de creación</button>
-      </div>
-</form>
+      </div> <!-- Cierre de la grid principal -->
+    </div> <!-- Cierre del primer contenedor 'space-y-12' -->
+</form> <!-- Cierre del formulario -->
 
 <!-- Form Main Logic -->
-
 <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
+<script src="/lib/form-submission.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     // Global variables
@@ -814,13 +838,20 @@
         });
       }
 
-      elements.showAllButton.addEventListener('click', function() {
+      elements.showAllButton.addEventListener('click', function () {
         showAllInstitutions(); // Populate the modal content
         elements.allInstitutionsModal.classList.remove('hidden'); // Show the modal
       });
 
-      elements.closeAllInstitutionsModal.addEventListener('click', function() {
+      elements.closeAllInstitutionsModal.addEventListener('click', function () {
         elements.allInstitutionsModal.classList.add('hidden');
+      });
+
+      // Event listener to close the modal when clicking outside the modal content
+      elements.allInstitutionsModal.addEventListener('click', function (event) {
+        if (event.target === elements.allInstitutionsModal) {
+          elements.allInstitutionsModal.classList.add('hidden');
+        }
       });
 
       const selectInstitutionButton = document.getElementById('select-institution');

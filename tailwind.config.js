@@ -1,9 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./*.{html,js,php}", // This will match all .html, .js, and .php files in the main directory
-    "./components/**/*.{html,js,php}", // This will continue to match files in the src directory
-  ],
+  content: ["./index.php", "./components/**/*.php", "./lib/**/*.js"],
   theme: {
     extend: {
       colors: {
