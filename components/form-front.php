@@ -362,7 +362,7 @@
         </div>
 
         <!-- Modal para solicitar nueva institución -->
-        <div id="new-institution-modal"
+        <!-- <div id="new-institution-modal"
           class="fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center hidden">
           <div class="bg-white p-6 rounded-lg">
             <h3 class="text-lg font-medium mb-4">Solicitar nueva institución</h3>
@@ -375,7 +375,7 @@
               <button type="button" id="close-modal" class="mt-4 ml-2 text-gray-600">Cancelar</button>
             </form>
           </div>
-        </div>
+        </div> -->
 
         <!-- Sede o Facultad -->
         <div class="col-span-6 sm:col-span-3">
