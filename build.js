@@ -24,12 +24,31 @@ function copyDir(src, dest) {
   }
 }
 
-// Copy necessary files and directories
-copyDir("./components", path.join(distDir, "components"));
-copyDir("./data", path.join(distDir, "data"));
-copyDir("./img", path.join(distDir, "data"));
-copyDir("./lib", path.join(distDir, "lib"));
+// Function to copy individual files
+function copyFile(src, dest) {
+  fs.copyFileSync(src, dest);
+}
 
-fs.copyFileSync("./index.php", path.join(distDir, "index.php"));
+// Copy directories
+const directoriesToCopy = ["components", "data", "img", "lib"];
+directoriesToCopy.forEach((dir) => {
+  copyDir(path.join(srcDir, dir), path.join(distDir, dir));
+});
+
+// Copy individual files
+const filesToCopy = [
+  "index.php",
+  "apple-touch-icon.png",
+  "favicon-48x48.png",
+  "favicon.ico",
+  "favicon.svg",
+  "site.webmanifest",
+  "web-app-manifest-192x192.png",
+  "web-app-manifest-512x512.png",
+];
+
+filesToCopy.forEach((file) => {
+  copyFile(path.join(srcDir, file), path.join(distDir, file));
+});
 
 console.log("Build complete!");
