@@ -27,11 +27,11 @@
 
         <!-- Nacionalidad -->
         <div class="sm:col-span-3">
-          <label for="nationality" class="block text-sm font-medium leading-6 text-gray-900">Nacionalidad</label>
+          <label for="nationality" class="block text-sm font-medium leading-6 text-gray-900">País de origen</label>
           <div class="mt-2">
             <select id="nationality" name="nationality" autocomplete="country-name" required
               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:max-w-xs sm:text-sm sm:leading-6">
-              <option value="">Seleccione una nacionalidad</option>
+              <option value="">Seleccione un país</option>
             </select>
             <span id="nationality-error" class="mt-2 text-sm text-red-500 hidden"></span>
           </div>
@@ -241,7 +241,7 @@
               } else {
                 phoneValidation.classList.add('hidden');
               }
-              if (phoneValue.startsWith('0')) {
+              if (phoneValue[1] && phoneValue[1].charAt(0) === '0') {
                 phoneZeroValidation.classList.remove('hidden');
               } else {
                 phoneZeroValidation.classList.add('hidden');
@@ -255,7 +255,7 @@
               } else {
                 phoneValidation.classList.add('hidden');
               }
-              if (phoneValue.startsWith('0')) {
+              if (phoneValue.charAt(0) === '0') {
                 phoneZeroValidation.classList.remove('hidden');
               } else {
                 phoneZeroValidation.classList.add('hidden');
@@ -297,8 +297,7 @@
 
         <!-- Correo electrónico institucional -->
         <div class="col-span-6 sm:col-span-4">
-          <label for="institutional-email" class="block text-sm font-medium leading-6 text-gray-900">Correo electrónico
-            institucional</label>
+          <label for="institutional-email" class="block text-sm font-medium leading-6 text-gray-900">Correo electrónico</label>
           <div class="mt-2">
             <input type="email" name="institutional-email" id="institutional-email" autocomplete="email" required
               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
