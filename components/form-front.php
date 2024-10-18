@@ -79,12 +79,12 @@
           <label for="gender" class="block text-sm font-medium leading-6 text-gray-900">Sexo</label>
           <div class="mt-2">
             <div class="flex items-center gap-x-3">
-              <input id="gender-woman" name="gender" type="radio" value="woman" required
+              <input id="gender-woman" name="gender" type="radio" value="Femenino" required
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
               <label for="gender-woman" class="block text-sm font-medium leading-6 text-gray-900">Femenino</label>
             </div>
             <div class="flex items-center gap-x-3">
-              <input id="gender-man" name="gender" type="radio" value="man" required
+              <input id="gender-man" name="gender" type="radio" value="Masculino" required
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
               <label for="gender-man" class="block text-sm font-medium leading-6 text-gray-900">Masculino</label>
             </div>
