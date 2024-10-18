@@ -626,7 +626,7 @@
 
 <!-- Form Main Logic -->
 <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
-<script src="/lib/form-submission.js"></script>
+<script src="lib/form-submission.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     // Global variables
