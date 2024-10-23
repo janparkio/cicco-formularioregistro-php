@@ -392,13 +392,12 @@
 
         <!-- Unidad o Carrera específica -->
         <div class="col-span-6 sm:col-span-3">
-          <label for="specific-unit-career" class="block text-sm font-medium leading-6 text-gray-900">Unidad o Carrera
-            específica</label>
+          <label for="specific-unit-career" class="block text-sm font-medium leading-6 text-gray-900">Unidad o Carrera específica</label>
           <div class="mt-2">
-            <select id="specific-unit-career" name="specific-unit-career" required disabled
-              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
-              <option value="">Seleccione una carrera</option>
-            </select>
+            <input type="text" id="specific-unit-career" name="specific-unit-career" required
+              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+              pattern="[^/]+"
+              title="No se permite el uso del carácter '/'">
             <span id="specific-unit-career-error" class="mt-2 text-sm text-red-500 hidden"></span>
           </div>
         </div>
@@ -608,8 +607,16 @@
         </div>
       </div>
 
-      <!-- Patcha Challange - Hidden -->
-      <input type="hidden" name="captcha_challenge" id="captcha_challenge">
+      <!-- Captcha Challenge -->
+      <div class="mt-6">
+        <label for="captcha_challenge" class="block text-sm font-medium leading-6 text-gray-900">Captcha</label>
+        <div class="mt-2 flex items-center">
+          <input type="text" id="captcha_challenge" name="captcha_challenge" required
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+          <img src="captcha.php" alt="CAPTCHA" class="ml-2 h-10 rounded">
+        </div>
+        <span id="captcha-error" class="mt-2 text-sm text-red-500 hidden"></span>
+      </div>
 
       <!-- Error message - Logic -->
        <div id="form-error-message"
