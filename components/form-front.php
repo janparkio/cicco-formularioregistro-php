@@ -1,4 +1,4 @@
-<form id="registration-form" method="post" action="https://cicco.conacyt.gov.py/solicitud_registro/procesar_ingreso_2023_NEW.php">
+<form id="registration-form" method="post" onsubmit="submitForm(event)">
   <div class="space-y-12">
     <div>
       <h2 class="text-base font-semibold leading-7 text-gray-900">Información Personal</h2>
