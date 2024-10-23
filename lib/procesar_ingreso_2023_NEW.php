@@ -1,3 +1,6 @@
+<!-- This is just areference of what the previus form looked like, this is not a file that should be edited. -->
+ <!-- the original file lives here:https://cicco.conacyt.gov.py/solicitud_registro/procesar_ingreso_2023_NEW.php so the changes should occur somewhere else an not in this file -->
+
 <?php
 
     session_start();
