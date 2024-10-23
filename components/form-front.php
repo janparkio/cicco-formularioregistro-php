@@ -106,7 +106,7 @@
                 $minYear = $currentYear - 120;
                 $maxYear = $currentYear - 5;
                 for ($year = $maxYear; $year >= $minYear; $year--) {
-                    echo "<option value=\"$year\">$year</option>";
+                  echo "<option value=\"$year\">$year</option>";
                 }
                 ?>
               </select>
@@ -118,21 +118,21 @@
                 <option value="">Mes</option>
                 <?php
                 $months = [
-                    1 => "Enero",
-                    2 => "Febrero",
-                    3 => "Marzo",
-                    4 => "Abril",
-                    5 => "Mayo",
-                    6 => "Junio",
-                    7 => "Julio",
-                    8 => "Agosto",
-                    9 => "Septiembre",
-                    10 => "Octubre",
-                    11 => "Noviembre",
-                    12 => "Diciembre",
+                  1 => "Enero",
+                  2 => "Febrero",
+                  3 => "Marzo",
+                  4 => "Abril",
+                  5 => "Mayo",
+                  6 => "Junio",
+                  7 => "Julio",
+                  8 => "Agosto",
+                  9 => "Septiembre",
+                  10 => "Octubre",
+                  11 => "Noviembre",
+                  12 => "Diciembre",
                 ];
                 foreach ($months as $num => $name) {
-                    echo "<option value=\"$num\">$name</option>";
+                  echo "<option value=\"$num\">$name</option>";
                 }
                 ?>
               </select>
@@ -143,7 +143,7 @@
                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
                 <option value="">Día</option>
                 <?php for ($day = 1; $day <= 31; $day++) {
-                    echo "<option value=\"$day\">$day</option>";
+                  echo "<option value=\"$day\">$day</option>";
                 } ?>
               </select>
             </div>
@@ -392,13 +392,12 @@
 
         <!-- Unidad o Carrera específica -->
         <div class="col-span-6 sm:col-span-3">
-          <label for="specific-unit-career" class="block text-sm font-medium leading-6 text-gray-900">Unidad o Carrera específica</label>
+          <label for="specific-unit-career" class="block text-sm font-medium leading-6 text-gray-900">Unidad o Carrera
+            específica</label>
           <div class="mt-2">
             <input type="text" id="specific-unit-career" name="specific-unit-career" required
               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-              pattern="[^/]+"
-              title="No se permite el uso del carácter '/'">
-            <span id="specific-unit-career-error" class="mt-2 text-sm text-red-500 hidden"></span>
+              <span id="specific-unit-career-error" class="mt-2 text-sm text-red-500 hidden"></span>
           </div>
         </div>
 
@@ -608,50 +607,47 @@
       </div>
 
       <!-- Captcha Challenge -->
-      <div class="mt-6">
-        <label for="captcha_challenge" class="block text-sm font-medium leading-6 text-gray-900">Captcha</label>
-        <div class="mt-2 flex items-center">
-          <input type="text" id="captcha_challenge" name="captcha_challenge" required
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
-          <img src="captcha.php" alt="CAPTCHA" class="ml-2 h-10 rounded">
-        </div>
-        <span id="captcha-error" class="mt-2 text-sm text-red-500 hidden"></span>
+      <div id="captcha-status" class="hidden">
+        <div class="text-sm text-gray-500">Cargando token de seguridad...</div>
       </div>
+      <div id="captcha-error-message" class="hidden text-sm text-red-500"></div>
+      <input type="hidden" id="captcha_token" name="captcha_token">
 
       <!-- Error message - Logic -->
-       <div id="form-error-message"
-         class="hidden bg-red-100 mt-10 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-         <strong class="font-bold">Hubo un error, contacte a soporte.</strong>
-         <p class="block sm:inline" id="error-text"></p>
-       </div>
+      <div id="form-error-message"
+        class="hidden bg-red-100 mt-10 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <strong class="font-bold">Hubo un error, contacte a soporte.</strong>
+        <p class="block sm:inline" id="error-text"></p>
+      </div>
 
       <!-- Success message - Logic -->
-        <div id="form-success-message"
-          class="hidden bg-green-100 mt-10 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-          <strong class="font-bold">Envío exitoso</strong>
-          <p class="block sm:inline" id="success-text"></p>
-        </div>
+      <div id="form-success-message"
+        class="hidden bg-green-100 mt-10 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
+        role="alert">
+        <strong class="font-bold">Envío exitoso</strong>
+        <p class="block sm:inline" id="success-text"></p>
+      </div>
 
-        <!-- Submit button and loading indicator -->
-        <div class="mt-6 flex items-center justify-end gap-x-6">
-          <!-- Loading indicator -->
-          <div id="loading-indicator" class="hidden flex items-center">
-            <svg class="animate-spin h-5 w-5 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none"
-              viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-              </path>
-            </svg>
-            <span class="ml-2">Enviando...</span>
-          </div>
-          <!-- Submit button -->
-          <button type="submit"
-            class="rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
-            Enviar solicitud de creación
-          </button>
+      <!-- Submit button and loading indicator -->
+      <div class="mt-6 flex items-center justify-end gap-x-6">
+        <!-- Loading indicator -->
+        <div id="loading-indicator" class="hidden flex items-center">
+          <svg class="animate-spin h-5 w-5 text-primary-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+          <span class="ml-2">Enviando...</span>
         </div>
-      </form>
+        <!-- Submit button -->
+        <button type="submit"
+          class="rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
+          Enviar solicitud de creación
+        </button>
+      </div>
+</form>
 
 <!-- Form Main Logic -->
 <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>

@@ -1,44 +1,39 @@
 <?php
-session_start();
+// Prevent any output before headers
+ob_start();
 
-// Generate a random string
-$random_string = substr(md5(rand()), 0, 6);
-
-// Store the string in the session
-$_SESSION["captcha_text"] = $random_string;
-
-// Create an image
-$image = imagecreatetruecolor(120, 30);
-
-// Set colors
-$bg_color = imagecolorallocate($image, 255, 255, 255);
-$text_color = imagecolorallocate($image, 0, 0, 0);
-
-// Fill background
-imagefilledrectangle($image, 0, 0, 120, 30, $bg_color);
-
-// Add random lines
-for ($i = 0; $i < 5; $i++) {
-    $line_color = imagecolorallocate(
-        $image,
-        rand(0, 255),
-        rand(0, 255),
-        rand(0, 255)
-    );
-    imageline(
-        $image,
-        rand(0, 120),
-        rand(0, 30),
-        rand(0, 120),
-        rand(0, 30),
-        $line_color
-    );
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-// Add the text
-imagestring($image, 5, 20, 5, $random_string, $text_color);
+// Set JSON headers
+header('Content-Type: application/json');
+header('Cache-Control: no-cache, must-revalidate');
 
-// Output the image
-header("Content-type: image/png");
-imagepng($image);
-imagedestroy($image);
+try {
+    // Generate a random token
+    $token = bin2hex(random_bytes(32));
+    
+    // Store the token in the session
+    $_SESSION['captcha_token'] = $token;
+    
+    // Clear any buffered output
+    ob_clean();
+    
+    // Return only the JSON response
+    echo json_encode([
+        'token' => $token,
+        'status' => 'success'
+    ]);
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Failed to generate captcha token'
+    ]);
+}
+
+// End output buffering and exit
+ob_end_flush();
+exit;
