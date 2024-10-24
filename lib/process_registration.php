@@ -1,4 +1,8 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
 
 header('Content-Type: application/json');
@@ -28,14 +32,23 @@ if (!isset($_POST['captcha_token']) || $_POST['captcha_token'] !== $_SESSION['ca
     exit;
 }
 
-// Load JSON data for validation
-$instituciones = json_decode(file_get_contents('../data/INSTITUCIONES_2023.json'), true)['datos'];
-$facultades = json_decode(file_get_contents('../data/FACULTADES_2023.json'), true)['datos'];
-$carreras = json_decode(file_get_contents('../data/CARRERAS_2023.json'), true)['datos'];
+try {
+    $instituciones = json_decode(file_get_contents(__DIR__ . '/../data/INSTITUCIONES_2023.json'), true);
+    $facultades = json_decode(file_get_contents(__DIR__ . '/../data/FACULTADES_2023.json'), true);
+    $carreras = json_decode(file_get_contents(__DIR__ . '/../data/CARRERAS_2023.json'), true);
 
-$lista_instituciones = array_column($instituciones, 'denominacion');
-$lista_facultades = array_column($facultades, 'denominacion');
-$lista_carreras = array_column($carreras, 'denominacion');
+    if (!$instituciones || !$facultades || !$carreras) {
+        throw new Exception('Error loading JSON data files');
+    }
+
+    $lista_instituciones = array_column($instituciones['datos'], 'denominacion');
+    $lista_facultades = array_column($facultades['datos'], 'denominacion');
+    $lista_carreras = array_column($carreras['datos'], 'denominacion');
+} catch (Exception $e) {
+    $response['message'] = 'Error interno del servidor: ' . $e->getMessage();
+    echo json_encode($response);
+    exit;
+}
 
 // Other lists for validation
 $lista_nacionalidad = ["Paraguaya", "Extranjera"];
@@ -45,7 +58,7 @@ $lista_cargo_institucion = ["Investigador", "Investigador PRONII", "Docente univ
 // Process and validate form data
 $required_fields = [
     'nombres' => 'Nombres',
-    'apellidos' => 'Apellidos',
+    'apellidos' => 'Apellidos', 
     'nacionalidad' => 'Nacionalidad',
     'dni' => 'Número de Documento',
     'genero' => 'Género',
@@ -81,9 +94,13 @@ if (!in_array($_POST['genero'], $lista_sexo)) {
     $MSJ_ERROR .= "Sexo$separador";
 }
 
-$birth_date = $_POST['birth_year'] . '-' . $_POST['birth_month'] . '-' . $_POST['birth_day'];
+$birth_year = $_POST['birth-year'] ?? '';
+$birth_month = $_POST['birth-month'] ?? '';
+$birth_day = $_POST['birth-day'] ?? '';
+$birth_date = sprintf('%04d-%02d-%02d', $birth_year, $birth_month, $birth_day);
+
 if (!validateDate($birth_date)) {
-    $MSJ_ERROR .= "Fecha Nacimiento$separador";
+    $MSJ_ERROR .= "Fecha de Nacimiento$separador";
 }
 
 if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
@@ -108,20 +125,20 @@ if (!in_array($_POST['rol'], $lista_cargo_institucion)) {
 
 // Validate research areas
 $research_areas = [
-    'ciencias-naturales',
-    'ingenieria-tecnologia',
-    'ciencias-medicas-salud',
-    'ciencias-agricolas-veterinarias',
-    'ciencias-sociales',
-    'humanidades-artes'
+    'et_pb_contact_area_investigacion_0_23_0' => 'Ciencias Naturales',
+    'et_pb_contact_area_investigacion_0_23_1' => 'Ingeniería y Tecnología',
+    'et_pb_contact_area_investigacion_0_23_2' => 'Ciencias Médicas y de la Salud', 
+    'et_pb_contact_area_investigacion_0_23_3' => 'Ciencias Agrícolas y Veterinarias',
+    'et_pb_contact_area_investigacion_0_23_4' => 'Ciencias Sociales',
+    'et_pb_contact_area_investigacion_0_23_5' => 'Humanidades y Artes'
 ];
 
-$selected_areas = array_filter($research_areas, function($area) use ($_POST) {
-    return isset($_POST[$area]) && $_POST[$area] === 'on';
-});
+$selected_areas = array_filter($research_areas, function($value, $key) use ($_POST) {
+    return isset($_POST[$key]) && $_POST[$key] === $value;
+}, ARRAY_FILTER_USE_BOTH);
 
 if (empty($selected_areas)) {
-    $MSJ_ERROR .= "Área de Investigación$separador";
+    $MSJ_ERROR .= "Dominio científico de su interés$separador";
 }
 
 // If there are no errors, process the data
