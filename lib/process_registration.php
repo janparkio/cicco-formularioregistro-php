@@ -1,4 +1,47 @@
 <?php
+try {
+    error_log("Test message", 3, __DIR__ . '/solicitud_registro_usuario/php_errors.log');
+    file_put_contents(__DIR__ . '/solicitud_registro_usuario/debug.log', 'Script started: ' . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
+    file_put_contents(__DIR__ . '/debug.log', 'Attempting to read JSON files' . "\n", FILE_APPEND);
+
+    $instituciones_path = __DIR__ . '/../data/INSTITUCIONES_2023.json';
+    $facultades_path = __DIR__ . '/../data/FACULTADES_2023.json';
+    $carreras_path = __DIR__ . '/../data/CARRERAS_2023.json';
+
+    file_put_contents(__DIR__ . '/debug.log', 'Paths: ' . print_r([
+        'instituciones' => $instituciones_path,
+        'facultades' => $facultades_path,
+        'carreras' => $carreras_path
+    ], true) . "\n", FILE_APPEND);
+
+    if (!file_exists($instituciones_path)) {
+        throw new Exception('Instituciones file not found');
+    }
+    if (!file_exists($facultades_path)) {
+        throw new Exception('Facultades file not found'); 
+    }
+    if (!file_exists($carreras_path)) {
+        throw new Exception('Carreras file not found');
+    }
+
+    $instituciones = json_decode(file_get_contents($instituciones_path), true);
+    $facultades = json_decode(file_get_contents($facultades_path), true);
+    $carreras = json_decode(file_get_contents($carreras_path), true);
+
+    if (!$instituciones || !$facultades || !$carreras) {
+        throw new Exception('Error loading JSON data files');
+    }
+
+    $lista_instituciones = array_column($instituciones['datos'], 'denominacion');
+    $lista_facultades = array_column($facultades['datos'], 'denominacion');
+    $lista_carreras = array_column($carreras['datos'], 'denominacion');
+} catch (Exception $e) {
+    error_log("Error: " . $e->getMessage());
+    $response['message'] = 'Error interno del servidor: ' . $e->getMessage();
+    echo json_encode($response);
+    exit;
+}
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -29,24 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Verify CAPTCHA
 if (!isset($_POST['captcha_token']) || $_POST['captcha_token'] !== $_SESSION['captcha_token']) {
     $response['message'] = 'CAPTCHA verification failed';
-    echo json_encode($response);
-    exit;
-}
-
-try {
-    $instituciones = json_decode(file_get_contents(__DIR__ . '/../data/INSTITUCIONES_2023.json'), true);
-    $facultades = json_decode(file_get_contents(__DIR__ . '/../data/FACULTADES_2023.json'), true);
-    $carreras = json_decode(file_get_contents(__DIR__ . '/../data/CARRERAS_2023.json'), true);
-
-    if (!$instituciones || !$facultades || !$carreras) {
-        throw new Exception('Error loading JSON data files');
-    }
-
-    $lista_instituciones = array_column($instituciones['datos'], 'denominacion');
-    $lista_facultades = array_column($facultades['datos'], 'denominacion');
-    $lista_carreras = array_column($carreras['datos'], 'denominacion');
-} catch (Exception $e) {
-    $response['message'] = 'Error interno del servidor: ' . $e->getMessage();
     echo json_encode($response);
     exit;
 }
