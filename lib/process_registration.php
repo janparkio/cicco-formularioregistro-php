@@ -1,9 +1,26 @@
 <?php
+// Configure session settings
+ini_set('session.cookie_secure', 'On');
+ini_set('session.cookie_httponly', 'On');
+ini_set('session.cookie_samesite', 'Strict');
+ini_set('session.cookie_path', '/');
+ini_set('session.cookie_domain', '.conacyt.gov.py');
+
 session_start();
+
+// Set response headers
 header('Content-Type: application/json');
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
+// Log session details
+error_log("Form Processing Session: " . json_encode([
+    'session_id' => session_id(),
+    'cookies' => $_COOKIE,
+    'session_status' => session_status(),
+    'headers' => getallheaders()
+]));
 
 // Constants
 const REQUIRED_FIELDS = [

@@ -2,10 +2,25 @@
 // Prevent any output before headers
 ob_start();
 
+// Configure session settings
+ini_set('session.cookie_secure', 'On');
+ini_set('session.cookie_httponly', 'On'); 
+ini_set('session.cookie_samesite', 'Strict');
+ini_set('session.cookie_path', '/');
+ini_set('session.cookie_domain', '.conacyt.gov.py');
+
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Log session start details
+error_log("CAPTCHA Session Start: " . json_encode([
+    'session_id' => session_id(),
+    'cookies' => $_COOKIE,
+    'session_status' => session_status(),
+    'headers' => getallheaders()
+]));
 
 // Set JSON headers
 header('Content-Type: application/json');
@@ -23,12 +38,17 @@ try {
     // Store the token in the session
     $_SESSION['captcha_token'] = $token;
 
-    // Add debug logging
-    error_log("CAPTCHA Debug: " . json_encode([
+    // Force session write
+    session_write_close();
+
+    // Enhanced debug logging
+    error_log("CAPTCHA Session Debug: " . json_encode([
         'session_id' => session_id(),
         'token' => $token,
         'session_status' => session_status(),
-        'headers' => getallheaders()
+        'cookie_params' => session_get_cookie_params(),
+        'headers_sent' => headers_sent(),
+        'cookies_sent' => $_COOKIE
     ]));
     
     // Clear any buffered output
