@@ -2,6 +2,7 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+error_log("Processing registration request");
 
 session_start();
 
@@ -58,7 +59,7 @@ $lista_cargo_institucion = ["Investigador", "Investigador PRONII", "Docente univ
 // Process and validate form data
 $required_fields = [
     'nombres' => 'Nombres',
-    'apellidos' => 'Apellidos', 
+    'apellidos' => 'Apellidos',
     'nacionalidad' => 'Nacionalidad',
     'dni' => 'Número de Documento',
     'genero' => 'Género',
@@ -127,14 +128,14 @@ if (!in_array($_POST['rol'], $lista_cargo_institucion)) {
 $research_areas = [
     'et_pb_contact_area_investigacion_0_23_0' => 'Ciencias Naturales',
     'et_pb_contact_area_investigacion_0_23_1' => 'Ingeniería y Tecnología',
-    'et_pb_contact_area_investigacion_0_23_2' => 'Ciencias Médicas y de la Salud', 
+    'et_pb_contact_area_investigacion_0_23_2' => 'Ciencias Médicas y de la Salud',
     'et_pb_contact_area_investigacion_0_23_3' => 'Ciencias Agrícolas y Veterinarias',
     'et_pb_contact_area_investigacion_0_23_4' => 'Ciencias Sociales',
     'et_pb_contact_area_investigacion_0_23_5' => 'Humanidades y Artes'
 ];
 
-$selected_areas = array_filter($research_areas, function($value, $key) use ($_POST) {
-    return isset($_POST[$key]) && $_POST[$key] === $value;
+$selected_areas = array_filter($research_areas, function ($value, $key) use ($_POST) {
+    return isset($_POST[$key]) && $_POST[$key] === 'on';
 }, ARRAY_FILTER_USE_BOTH);
 
 if (empty($selected_areas)) {
@@ -163,25 +164,30 @@ if (empty($MSJ_ERROR)) {
         "cargo_institucion" => $_POST['rol'],
         "departamento" => $_POST['departamento'],
         "ciudad" => $_POST['ciudad'],
-        "ciencias_naturales" => in_array('ciencias-naturales', $selected_areas) ? 'on' : 'off',
-        "ingenieria_tecnologia" => in_array('ingenieria-tecnologia', $selected_areas) ? 'on' : 'off',
-        "ciencias_medicas_salud" => in_array('ciencias-medicas-salud', $selected_areas) ? 'on' : 'off',
-        "ciencias_agricolas_veterinarias" => in_array('ciencias-agricolas-veterinarias', $selected_areas) ? 'on' : 'off',
-        "ciencias_sociales" => in_array('ciencias-sociales', $selected_areas) ? 'on' : 'off',
-        "humanidades_artes" => in_array('humanidades-artes', $selected_areas) ? 'on' : 'off',
+        "ciencias_naturales" => isset($_POST['et_pb_contact_area_investigacion_0_23_0']) ? 'on' : 'off',
+        "ingenieria_tecnologia" => isset($_POST['et_pb_contact_area_investigacion_0_23_1']) ? 'on' : 'off',
+        "ciencias_medicas_salud" => isset($_POST['et_pb_contact_area_investigacion_0_23_2']) ? 'on' : 'off',
+        "ciencias_agricolas_veterinarias" => isset($_POST['et_pb_contact_area_investigacion_0_23_3']) ? 'on' : 'off',
+        "ciencias_sociales" => isset($_POST['et_pb_contact_area_investigacion_0_23_4']) ? 'on' : 'off',
+        "humanidades_artes" => isset($_POST['et_pb_contact_area_investigacion_0_23_5']) ? 'on' : 'off',
     );
 
     $json = json_encode($arreglo);
     $parametros = '"' . base64_encode($json) . '"';
 
-    // Execute external script
-    exec('/var/www/PY/rutina_ingreso_2023.sh ' . $accion . ' ' . $parametros, $output, $return);
+    error_log("Executing external script with parameters: " . $parametros);
+    exec('/var/www/PY/rutina_ingreso_2023.sh ' . $accion . ' ' . $parametros . ' 2>&1', $output, $return);
+    
+    error_log("Script output: " . print_r($output, true));
+    error_log("Script return code: " . $return);
 
     if ($return == '0') {
         $response['success'] = true;
         $response['message'] = 'Registro exitoso. Sus datos han sido enviados para verificación.';
     } else {
+        $response['success'] = false;
         $response['message'] = 'Error en el procesamiento del formulario.';
+        $response['debug'] = $output;
     }
 } else {
     $response['message'] = 'Se encontraron errores en el formulario. Por favor, corríjalos e intente nuevamente.';
