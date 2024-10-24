@@ -2,16 +2,16 @@
 // Prevent any output before headers
 ob_start();
 
-// Configure session settings
+// Update session configuration
 ini_set('session.cookie_secure', 'On');
-ini_set('session.cookie_httponly', 'On'); 
-ini_set('session.cookie_samesite', 'Strict');
+ini_set('session.cookie_httponly', 'On');
+ini_set('session.cookie_samesite', 'Lax'); // Changed from Strict to Lax
 ini_set('session.cookie_path', '/');
 ini_set('session.cookie_domain', '.conacyt.gov.py');
 
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+    session_start(['cookie_lifetime' => 3600]); // Set 1-hour lifetime
 }
 
 // Log session start details
@@ -25,11 +25,12 @@ error_log("CAPTCHA Session Start: " . json_encode([
 // Set JSON headers
 header('Content-Type: application/json');
 header('Cache-Control: no-cache, must-revalidate');
-// Allow requests from the main domain
+// Set CORS headers
 header('Access-Control-Allow-Origin: https://cicco.conacyt.gov.py');
 header('Access-Control-Allow-Credentials: true');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Accept, X-Requested-With');
+header('Access-Control-Allow-Headers: Accept, X-Requested-With, Content-Type');
+header('Access-Control-Max-Age: 1728000');
 
 try {
     // Generate a random token

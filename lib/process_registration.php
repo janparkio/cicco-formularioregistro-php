@@ -6,13 +6,42 @@ ini_set('session.cookie_samesite', 'Strict');
 ini_set('session.cookie_path', '/');
 ini_set('session.cookie_domain', '.conacyt.gov.py');
 
-session_start();
+// Start session with cookie lifetime
+session_start(['cookie_lifetime' => 3600]);
 
 // Set response headers
 header('Content-Type: application/json');
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+
+// Validate CAPTCHA token first
+if (!isset($_POST['captcha_token']) || !isset($_SESSION['captcha_token'])) {
+    $response = [
+        'success' => false,
+        'message' => 'Error de verificación de seguridad: Token no encontrado',
+        'debug' => [
+            'token_received' => isset($_POST['captcha_token']),
+            'session_token' => isset($_SESSION['captcha_token']),
+            'session_data' => $_SESSION
+        ]
+    ];
+    echo json_encode($response);
+    exit;
+}
+
+if ($_POST['captcha_token'] !== $_SESSION['captcha_token']) {
+    $response = [
+        'success' => false,
+        'message' => 'Error de verificación de seguridad: Token inválido',
+        'debug' => [
+            'received_token' => $_POST['captcha_token'],
+            'session_token' => $_SESSION['captcha_token']
+        ]
+    ];
+    echo json_encode($response);
+    exit;
+}
 
 // Log session details
 error_log("Form Processing Session: " . json_encode([
@@ -104,40 +133,9 @@ function processSubmission($data) {
             'errors' => [],
             'debug' => [
                 'timestamp' => date('Y-m-d H:i:s'),
-                'request_method' => $_SERVER['REQUEST_METHOD'],
-                'captcha' => [
-                    'token_received' => isset($data['captcha_token']),
-                    'session_token_exists' => isset($_SESSION['captcha_token']),
-                    'session_token' => $_SESSION['captcha_token'] ?? 'not_set',
-                    'received_token' => $data['captcha_token'] ?? 'not_sent'
-                ]
+                'request_method' => $_SERVER['REQUEST_METHOD']
             ]
         ];
-
-        // Validate CAPTCHA
-        if (!isset($data['captcha_token']) || !isset($_SESSION['captcha_token'])) {
-            $error_msg = 'Error de verificación de seguridad: Token no encontrado';
-            error_log("CAPTCHA Validation Failed - Missing Token: " . json_encode([
-                'ip' => $_SERVER['REMOTE_ADDR'],
-                'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-                'debug' => $response['debug']['captcha']
-            ]));
-            $response['message'] = $error_msg;
-            $response['debug']['error_type'] = 'missing_token';
-            return $response;
-        }
-
-        if ($data['captcha_token'] !== $_SESSION['captcha_token']) {
-            $error_msg = 'Error de verificación de seguridad: Token inválido';
-            error_log("CAPTCHA Validation Failed - Token Mismatch: " . json_encode([
-                'ip' => $_SERVER['REMOTE_ADDR'],
-                'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-                'debug' => $response['debug']['captcha']
-            ]));
-            $response['message'] = $error_msg;
-            $response['debug']['error_type'] = 'token_mismatch';
-            return $response;
-        }
 
         // Validate form data
         $errors = validateFormData($data);
