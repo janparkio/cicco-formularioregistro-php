@@ -10,6 +10,11 @@ if (session_status() === PHP_SESSION_NONE) {
 // Set JSON headers
 header('Content-Type: application/json');
 header('Cache-Control: no-cache, must-revalidate');
+// Allow requests from the main domain
+header('Access-Control-Allow-Origin: https://cicco.conacyt.gov.py');
+header('Access-Control-Allow-Credentials: true');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Accept, X-Requested-With');
 
 try {
     // Generate a random token
