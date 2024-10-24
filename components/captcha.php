@@ -22,6 +22,14 @@ try {
     
     // Store the token in the session
     $_SESSION['captcha_token'] = $token;
+
+    // Add debug logging
+    error_log("CAPTCHA Debug: " . json_encode([
+        'session_id' => session_id(),
+        'token' => $token,
+        'session_status' => session_status(),
+        'headers' => getallheaders()
+    ]));
     
     // Clear any buffered output
     ob_clean();
