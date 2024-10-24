@@ -1,43 +1,52 @@
 <?php
+session_start();
+header('Content-Type: application/json');
+
+$response = [
+    'success' => false,
+    'message' => '',
+    'errors' => []
+];
 try {
-    error_log("Test message", 3, __DIR__ . '/solicitud_registro_usuario/php_errors.log');
-    file_put_contents(__DIR__ . '/solicitud_registro_usuario/debug.log', 'Script started: ' . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
-    file_put_contents(__DIR__ . '/debug.log', 'Attempting to read JSON files' . "\n", FILE_APPEND);
+    $debug = [
+        'timestamp' => date('Y-m-d H:i:s'),
+        'request_method' => $_SERVER['REQUEST_METHOD'],
+        'post_data' => $_POST,
+        'files' => [
+            'instituciones' => __DIR__ . '/../data/INSTITUCIONES_2023.json',
+            'facultades' => __DIR__ . '/../data/FACULTADES_2023.json',
+            'carreras' => __DIR__ . '/../data/CARRERAS_2023.json'
+        ]
+    ];
 
-    $instituciones_path = __DIR__ . '/../data/INSTITUCIONES_2023.json';
-    $facultades_path = __DIR__ . '/../data/FACULTADES_2023.json';
-    $carreras_path = __DIR__ . '/../data/CARRERAS_2023.json';
+    $response['debug'] = $debug;
 
-    file_put_contents(__DIR__ . '/debug.log', 'Paths: ' . print_r([
-        'instituciones' => $instituciones_path,
-        'facultades' => $facultades_path,
-        'carreras' => $carreras_path
-    ], true) . "\n", FILE_APPEND);
-
-    if (!file_exists($instituciones_path)) {
-        throw new Exception('Instituciones file not found');
+    // Check if files exist and are readable
+    foreach ($debug['files'] as $key => $path) {
+        if (!file_exists($path)) {
+            throw new Exception("File not found: {$key} at {$path}");
+        }
+        if (!is_readable($path)) {
+            throw new Exception("File not readable: {$key} at {$path}");
+        }
     }
-    if (!file_exists($facultades_path)) {
-        throw new Exception('Facultades file not found'); 
-    }
-    if (!file_exists($carreras_path)) {
-        throw new Exception('Carreras file not found');
-    }
 
-    $instituciones = json_decode(file_get_contents($instituciones_path), true);
-    $facultades = json_decode(file_get_contents($facultades_path), true);
-    $carreras = json_decode(file_get_contents($carreras_path), true);
+    $instituciones = json_decode(file_get_contents($debug['files']['instituciones']), true);
+    $facultades = json_decode(file_get_contents($debug['files']['facultades']), true);
+    $carreras = json_decode(file_get_contents($debug['files']['carreras']), true);
 
-    if (!$instituciones || !$facultades || !$carreras) {
-        throw new Exception('Error loading JSON data files');
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        throw new Exception("JSON decode error: " . json_last_error_msg());
     }
 
     $lista_instituciones = array_column($instituciones['datos'], 'denominacion');
     $lista_facultades = array_column($facultades['datos'], 'denominacion');
     $lista_carreras = array_column($carreras['datos'], 'denominacion');
+
 } catch (Exception $e) {
-    error_log("Error: " . $e->getMessage());
-    $response['message'] = 'Error interno del servidor: ' . $e->getMessage();
+    $response['success'] = false;
+    $response['message'] = $e->getMessage();
+    $response['debug'] = $debug ?? null;
     echo json_encode($response);
     exit;
 }
@@ -47,21 +56,12 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 error_log("Processing registration request");
 
-session_start();
-
-header('Content-Type: application/json');
 
 function validateDate($date, $format = 'Y-m-d')
 {
     $d = DateTime::createFromFormat($format, $date);
     return $d && $d->format($format) === $date;
 }
-
-$response = [
-    'success' => false,
-    'message' => '',
-    'errors' => []
-];
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $response['message'] = 'Invalid request method';
@@ -202,7 +202,7 @@ if (empty($MSJ_ERROR)) {
 
     error_log("Executing external script with parameters: " . $parametros);
     exec('/var/www/PY/rutina_ingreso_2023.sh ' . $accion . ' ' . $parametros . ' 2>&1', $output, $return);
-    
+
     error_log("Script output: " . print_r($output, true));
     error_log("Script return code: " . $return);
 
