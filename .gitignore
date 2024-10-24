@@ -39,4 +39,6 @@ Thumbs.db
 # Miscellaneous
 *.bak
 *.cache
-```
+
+# reference files
+reference/
