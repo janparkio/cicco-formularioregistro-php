@@ -1,189 +1,120 @@
 <?php
-// Configure session settings
-ini_set('session.cookie_secure', 'On');
-ini_set('session.cookie_httponly', 'On');
-ini_set('session.cookie_samesite', 'Strict');
-ini_set('session.cookie_path', '/');
-ini_set('session.cookie_domain', '.conacyt.gov.py');
-
-// Start session with cookie lifetime
-session_start(['cookie_lifetime' => 3600]);
-
-// Set response headers
-header('Content-Type: application/json');
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+ini_set('display_errors', 0);
+header('Content-Type: application/json');
 
-// Validate CAPTCHA token first
-if (!isset($_POST['captcha_token']) || !isset($_SESSION['captcha_token'])) {
-    $response = [
-        'success' => false,
-        'message' => 'Error de verificación de seguridad: Token no encontrado',
-        'debug' => [
-            'token_received' => isset($_POST['captcha_token']),
-            'session_token' => isset($_SESSION['captcha_token']),
-            'session_data' => $_SESSION
-        ]
-    ];
-    echo json_encode($response);
+session_start();
+
+function sendJsonResponse($success, $message, $errors = [], $debug = []) {
+    echo json_encode([
+        'success' => $success,
+        'message' => $message,
+        'errors' => $errors,
+        'debug' => $debug
+    ]);
     exit;
 }
 
-if ($_POST['captcha_token'] !== $_SESSION['captcha_token']) {
-    $response = [
-        'success' => false,
-        'message' => 'Error de verificación de seguridad: Token inválido',
-        'debug' => [
-            'received_token' => $_POST['captcha_token'],
-            'session_token' => $_SESSION['captcha_token']
-        ]
-    ];
-    echo json_encode($response);
-    exit;
+// Log received data and session for debugging
+error_log("Received Form Data: " . json_encode($_POST));
+error_log("Session Data: " . json_encode($_SESSION));
+error_log("Session ID: " . session_id());
+
+// Validate CAPTCHA
+if (!isset($_POST['captcha']) || !isset($_SESSION['captcha'])) {
+    sendJsonResponse(false, 'Error de verificación de seguridad: CAPTCHA no encontrado', [], [
+        'captcha_received' => isset($_POST['captcha']),
+        'session_captcha' => isset($_SESSION['captcha']),
+        'session_status' => session_status(),
+        'session_id' => session_id()
+    ]);
 }
 
-// Log session details
-error_log("Form Processing Session: " . json_encode([
-    'session_id' => session_id(),
-    'cookies' => $_COOKIE,
-    'session_status' => session_status(),
-    'headers' => getallheaders()
-]));
+if ($_POST['captcha'] !== $_SESSION['captcha']) {
+    sendJsonResponse(false, 'Error de verificación de seguridad: CAPTCHA inválido', [], [
+        'received_captcha' => $_POST['captcha'],
+        'session_captcha' => $_SESSION['captcha']
+    ]);
+}
 
-// Constants
-const REQUIRED_FIELDS = [
-    'nombres' => 'Nombres',
-    'apellidos' => 'Apellidos', 
-    'nacionalidad' => 'Nacionalidad',
-    'dni' => 'Número de Documento',
-    'genero' => 'Género',
-    'phone' => 'Teléfono',
-    'email' => 'Correo Institucional',
-    'departamento' => 'Departamento',
-    'ciudad' => 'Ciudad',
+// Clear the CAPTCHA from the session after successful validation
+unset($_SESSION['captcha']);
+
+// Validate required fields and prepare data for LDAP creation
+$errors = [];
+$arreglo = [];
+
+$required_fields = [
+    'et_pb_contact_nombres_0' => 'Nombres',
+    'et_pb_contact_apellidos_0' => 'Apellidos',
+    'et_pb_contact_dni_0' => 'Número de Documento',
+    'et_pb_contact_nacionalidad_0' => 'Nacionalidad',
+    'et_pb_contact_genero_0' => 'Género',
+    'et_pb_contact_phone_0' => 'Teléfono',
+    'et_pb_contact_email_0' => 'Correo Institucional',
+    'et_pb_contact_departamento_0' => 'Departamento',
+    'et_pb_contact_ciudad_0' => 'Ciudad',
     'organizacion' => 'Institución',
     'organizacion_facultad' => 'Facultad',
     'organizacion_facultad_carrera' => 'Unidad/Carrera',
-    'rol' => 'Rol Institucional'
+    'et_pb_contact_rol_0' => 'Rol Institucional'
 ];
 
-const RESEARCH_AREAS = [
-    'et_pb_contact_area_investigacion_0_23_0' => 'Ciencias Naturales',
-    'et_pb_contact_area_investigacion_0_23_1' => 'Ingeniería y Tecnología',
-    'et_pb_contact_area_investigacion_0_23_2' => 'Ciencias Médicas y de la Salud',
-    'et_pb_contact_area_investigacion_0_23_3' => 'Ciencias Agrícolas y Veterinarias',
-    'et_pb_contact_area_investigacion_0_23_4' => 'Ciencias Sociales',
-    'et_pb_contact_area_investigacion_0_23_5' => 'Humanidades y Artes'
+foreach ($required_fields as $field => $label) {
+    if (empty($_POST[$field])) {
+        $errors[] = "El campo $label es requerido.";
+    } else {
+        $arreglo[$field] = $_POST[$field];
+    }
+}
+
+// Validate email format
+if (!filter_var($_POST['et_pb_contact_email_0'], FILTER_VALIDATE_EMAIL)) {
+    $errors[] = "El formato del correo electrónico no es válido.";
+}
+
+// Validate DNI format (assuming it should be 6-15 digits)
+if (!preg_match('/^\d{6,15}$/', $_POST['et_pb_contact_dni_0'])) {
+    $errors[] = "El número de documento debe tener entre 6 y 15 dígitos.";
+}
+
+// Add research areas
+$research_areas = [
+    'et_pb_contact_area_investigacion_0_23_0' => 'ciencias_naturales',
+    'et_pb_contact_area_investigacion_0_23_1' => 'ingenieria_tecnologia',
+    'et_pb_contact_area_investigacion_0_23_2' => 'ciencias_medicas_salud',
+    'et_pb_contact_area_investigacion_0_23_3' => 'ciencias_agricolas_veterinarias',
+    'et_pb_contact_area_investigacion_0_23_4' => 'ciencias_sociales',
+    'et_pb_contact_area_investigacion_0_23_5' => 'humanidades_artes'
 ];
 
-function validateFormData($data) {
-    $errors = [];
-    
-    // Validate required fields
-    foreach (REQUIRED_FIELDS as $field => $label) {
-        if (empty($data[$field])) {
-            $errors[] = [
-                'field' => $field,
-                'message' => "El campo {$label} es requerido"
-            ];
-        }
-    }
-    
-    // Validate DNI format
-    if (!empty($data['dni']) && !preg_match('/^\d{6,15}$/', $data['dni'])) {
-        $errors[] = [
-            'field' => 'dni',
-            'message' => 'El número de documento debe tener entre 6 y 15 dígitos'
-        ];
-    }
-    
-    // Validate email format
-    if (!empty($data['email']) && !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-        $errors[] = [
-            'field' => 'email',
-            'message' => 'El formato del correo electrónico no es válido'
-        ];
-    }
-    
-    // Validate research areas
-    $hasResearchArea = false;
-    foreach (RESEARCH_AREAS as $key => $value) {
-        if (isset($data[$key]) && $data[$key] === 'on') {
-            $hasResearchArea = true;
-            break;
-        }
-    }
-    
-    if (!$hasResearchArea) {
-        $errors[] = [
-            'field' => 'research_areas',
-            'message' => 'Debe seleccionar al menos un área de investigación'
-        ];
-    }
-    
-    return $errors;
-}
-
-function processSubmission($data) {
-    try {
-        $response = [
-            'success' => false,
-            'message' => '',
-            'errors' => [],
-            'debug' => [
-                'timestamp' => date('Y-m-d H:i:s'),
-                'request_method' => $_SERVER['REQUEST_METHOD']
-            ]
-        ];
-
-        // Validate form data
-        $errors = validateFormData($data);
-        if (!empty($errors)) {
-            $response['errors'] = $errors;
-            $response['message'] = 'Por favor, corrija los errores señalados';
-            return $response;
-        }
-
-        // Process valid submission
-        $result = executeRegistration($data);
-        
-        $response['success'] = $result['success'];
-        $response['message'] = $result['success'] 
-            ? 'Registro exitoso. Sus datos han sido enviados para verificación.'
-            : 'Error en el procesamiento del registro.';
-        
-        if (isset($result['debug'])) {
-            $response['debug']['processing'] = $result['debug'];
-        }
-
-        return $response;
-
-    } catch (Exception $e) {
-        error_log("Registration error: " . $e->getMessage() . "\nStack trace: " . $e->getTraceAsString());
-        return [
-            'success' => false,
-            'message' => 'Error interno del servidor',
-            'debug' => [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]
-        ];
+$area_selected = false;
+foreach ($research_areas as $post_key => $arreglo_key) {
+    $arreglo[$arreglo_key] = isset($_POST[$post_key]) ? $_POST[$post_key] : '';
+    if ($arreglo[$arreglo_key] === 'on') {
+        $area_selected = true;
     }
 }
 
-// Main execution
-try {
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception('Método no permitido');
-    }
-
-    $result = processSubmission($_POST);
-    echo json_encode($result);
-
-} catch (Exception $e) {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Error del servidor: ' . $e->getMessage()
-    ]);
+if (!$area_selected) {
+    $errors[] = "Debe seleccionar al menos un área de investigación.";
 }
+
+if (!empty($errors)) {
+    sendJsonResponse(false, 'Por favor, corrija los errores señalados', $errors);
+}
+
+// Prepare data for LDAP creation
+$arreglo['accion'] = 'validar_usuarios';
+$arreglo['metodo'] = $_SERVER['REQUEST_METHOD'];
+$arreglo['fecha_registro'] = date('Y-m-d H:i:s');
+$arreglo['uid'] = 'cona' . $_POST['et_pb_contact_dni_0'];
+$arreglo['nacimiento'] = date('Y-m-d', strtotime($_POST['et_pb_contact_fecha_nacimiento_0']));
+$arreglo['telefono'] = preg_replace('/[^0-9]/', '', $_POST['et_pb_contact_phone_0']);
+$arreglo['categoria_pronii'] = $_POST['et_pb_contact_categoria_pronii_0'];
+$arreglo['contact_orcid'] = $_POST['et_pb_contact_orcid_0'];
+$arreglo['contact_scopus'] = $_POST['et_pb_contact_scopus_0'];
+$arreglo['contact_wos'] = $_POST['et_pb_contact_wos_0'];
+
+// If everything is successful
+sendJsonResponse(true, 'Registro exitoso', [], ['redirect' => 'https://cicco.conacyt.gov.py/register/register_success.html']);

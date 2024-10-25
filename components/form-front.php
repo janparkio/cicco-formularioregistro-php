@@ -1,4 +1,4 @@
-<form id="registration-form" method="post" action="https://cicco.conacyt.gov.py/solicitud_registro/procesar_ingreso_2023_NEW.php">
+<form id="registration-form" method="post" action="https://cicco.conacyt.gov.py/solicitud_registro_usuario/lib/process_registration.php">
   <div class="space-y-12">
     <div>
       <h2 class="text-base font-semibold leading-7 text-gray-900">Información Personal</h2>
@@ -606,12 +606,18 @@
         </div>
       </div>
 
-      <!-- Captcha Challenge -->
-      <div id="captcha-status" class="hidden">
-        <div class="text-sm text-gray-500">Cargando token de seguridad...</div>
+      <!-- CAPTCHA Challenge -->
+      <div class="mt-4">
+        <label for="captcha-input" class="block text-sm font-medium text-gray-700">CAPTCHA</label>
+        <div class="mt-1 flex items-center">
+          <img id="captcha-image" src="https://cicco.conacyt.gov.py/solicitud_registro_usuario/lib/captcha.php" alt="CAPTCHA" class="mr-2">
+          <input type="text" id="captcha-input" name="captcha" required
+                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+        </div>
+        <button type="button" onclick="loadCaptcha()" class="mt-2 text-sm text-indigo-600 hover:text-indigo-500">
+          Recargar CAPTCHA
+        </button>
       </div>
-      <div id="captcha-error-message" class="hidden text-sm text-red-500"></div>
-      <input type="hidden" id="captcha_token" name="captcha_token">
 
       <!-- Error message - Logic -->
       <div id="form-error-message"
