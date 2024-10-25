@@ -927,7 +927,7 @@
       // Handle new institution request
       elements.requestNewButton.addEventListener('click', function () {
         // TODO: Replace later with actual website.
-        window.open('https://example.com/new-institution', '_blank');
+        window.open('https://cicco.conacyt.gov.py/contactos/', '_blank');
       });
     };
 
