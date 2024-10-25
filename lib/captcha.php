@@ -1,62 +1,54 @@
 <?php
-// Force session cookie parameters for better security and compatibility
-session_set_cookie_params([
-    'lifetime' => 0,
-    'path' => '/solicitud_registro_usuario/',
-    'domain' => '',
-    'secure' => true,
-    'httponly' => true,
-    'samesite' => 'Strict'
-]);
+// Include WordPress core
+require_once($_SERVER['DOCUMENT_ROOT'] . '/wp-load.php');
 
-// Start or resume session
-session_start();
-
-// Ensure session is working
-if (session_status() !== PHP_SESSION_ACTIVE) {
-    error_log("Session not active after session_start()!");
-    header('HTTP/1.1 500 Internal Server Error');
-    exit('Session initialization failed');
-}
-
+// Set headers
 header('Content-Type: image/png');
 
-// Generate and store CAPTCHA
-$captcha = generateCaptcha();
-$_SESSION['captcha'] = $captcha;
-$_SESSION['captcha_time'] = time();
-
-// Debug logging
-error_log("Generated CAPTCHA: " . $captcha);
-error_log("Session ID: " . session_id());
-error_log("Session Data: " . json_encode($_SESSION));
-
-// Create image
-$image = imagecreatetruecolor(120, 30);
-$bg = imagecolorallocate($image, 255, 255, 255);
-$textcolor = imagecolorallocate($image, 0, 0, 0);
-
-// Fill background
-imagefill($image, 0, 0, $bg);
-
-// Add some noise/lines to make it harder for bots
-for ($i = 0; $i < 5; $i++) {
-    $line_color = imagecolorallocate($image, rand(0, 255), rand(0, 255), rand(0, 255));
-    imageline($image, rand(0, 120), rand(0, 30), rand(0, 120), rand(0, 30), $line_color);
-}
-
-// Add text
-imagestring($image, 5, 5, 5, $captcha, $textcolor);
-
-// Output image
-imagepng($image);
-imagedestroy($image);
-
+// Generate CAPTCHA
 function generateCaptcha($length = 6) {
-    $characters = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ'; // Removed confusing characters
+    $characters = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
     $captcha = '';
     for ($i = 0; $i < $length; $i++) {
         $captcha .= $characters[rand(0, strlen($characters) - 1)];
     }
     return $captcha;
+}
+
+try {
+    // Generate CAPTCHA
+    $captcha = generateCaptcha();
+    
+    // Store in WordPress transient (like a session)
+    set_transient('user_captcha_' . $_SERVER['REMOTE_ADDR'], $captcha, 5 * MINUTE_IN_SECONDS);
+    
+    // Create image
+    $width = 120;
+    $height = 30;
+    $image = imagecreatetruecolor($width, $height);
+    
+    // Colors
+    $bg = imagecolorallocate($image, 255, 255, 255);
+    $text = imagecolorallocate($image, 0, 0, 0);
+    
+    // Fill background
+    imagefill($image, 0, 0, $bg);
+    
+    // Add text
+    imagestring($image, 5, 5, 5, $captcha, $text);
+    
+    // Output
+    imagepng($image);
+    imagedestroy($image);
+    
+    error_log("CAPTCHA generated and stored in transient: " . $captcha);
+    
+} catch (Exception $e) {
+    error_log("CAPTCHA generation error: " . $e->getMessage());
+    // Create error image
+    $image = imagecreatetruecolor(120, 30);
+    $bg = imagecolorallocate($image, 255, 0, 0);
+    imagefill($image, 0, 0, $bg);
+    imagepng($image);
+    imagedestroy($image);
 }
