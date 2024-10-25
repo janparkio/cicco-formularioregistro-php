@@ -26,7 +26,11 @@ function copyDir(src, dest) {
 
 // Function to copy individual files
 function copyFile(src, dest) {
-  fs.copyFileSync(src, dest);
+  if (fs.existsSync(src)) {
+    fs.copyFileSync(src, dest);
+  } else {
+    console.warn(`Warning: File not found: ${src}`);
+  }
 }
 
 // Copy directories
@@ -38,7 +42,7 @@ directoriesToCopy.forEach((dir) => {
 // Copy individual files
 const filesToCopy = [
   "index.php",
-  "registration-stats.php", // nuevo archivo para estadísticas
+  "registration_stats.php", // nuevo archivo para estadísticas
   "RegistrationLogger.php", // nuevo archivo para logger
   "register_success.php", // nuevo archivo para mensaje de éxito
   "apple-touch-icon.png",
