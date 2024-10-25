@@ -610,7 +610,7 @@
       <div class="mt-4">
         <label for="captcha-input" class="block text-sm font-medium text-gray-700">CAPTCHA</label>
         <div class="mt-1 flex items-center">
-          <img id="captcha-image" src="https://cicco.conacyt.gov.py/solicitud_registro_usuario/lib/captcha.php" alt="CAPTCHA" class="mr-2">
+          <img id="captcha-image" src="/solicitud_registro_usuario/lib/captcha.php" alt="CAPTCHA" class="mr-2">
           <input type="text" id="captcha-input" name="captcha" required
                  class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
         </div>
