@@ -3,6 +3,16 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 header('Content-Type: application/json');
 
+// Set secure cookie parameters
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path' => '/solicitud_registro_usuario/',
+    'domain' => '',
+    'secure' => true,
+    'httponly' => true,
+    'samesite' => 'Strict'
+]);
+
 session_start();
 
 function sendJsonResponse($success, $message, $errors = [], $debug = []) {
@@ -15,10 +25,10 @@ function sendJsonResponse($success, $message, $errors = [], $debug = []) {
     exit;
 }
 
-// Log received data and session for debugging
-error_log("Received Form Data: " . json_encode($_POST));
-error_log("Session Data: " . json_encode($_SESSION));
-error_log("Session ID: " . session_id());
+// Log debugging information
+error_log("Processing registration - Session ID: " . session_id());
+error_log("Session data: " . json_encode($_SESSION));
+error_log("POST data: " . json_encode($_POST));
 
 // Validate CAPTCHA
 if (!isset($_POST['captcha']) || !isset($_SESSION['captcha'])) {
@@ -26,11 +36,21 @@ if (!isset($_POST['captcha']) || !isset($_SESSION['captcha'])) {
         'captcha_received' => isset($_POST['captcha']),
         'session_captcha' => isset($_SESSION['captcha']),
         'session_status' => session_status(),
-        'session_id' => session_id()
+        'session_id' => session_id(),
+        'post_captcha' => $_POST['captcha'] ?? null,
+        'session_captcha_value' => $_SESSION['captcha'] ?? null
     ]);
 }
 
-if ($_POST['captcha'] !== $_SESSION['captcha']) {
+// Check if CAPTCHA has expired (5 minute limit)
+if (isset($_SESSION['captcha_time']) && (time() - $_SESSION['captcha_time']) > 300) {
+    unset($_SESSION['captcha']);
+    unset($_SESSION['captcha_time']);
+    sendJsonResponse(false, 'Error de verificación de seguridad: CAPTCHA expirado');
+}
+
+// Case-insensitive CAPTCHA comparison
+if (strtoupper($_POST['captcha']) !== strtoupper($_SESSION['captcha'])) {
     sendJsonResponse(false, 'Error de verificación de seguridad: CAPTCHA inválido', [], [
         'received_captcha' => $_POST['captcha'],
         'session_captcha' => $_SESSION['captcha']
@@ -39,6 +59,7 @@ if ($_POST['captcha'] !== $_SESSION['captcha']) {
 
 // Clear the CAPTCHA from the session after successful validation
 unset($_SESSION['captcha']);
+unset($_SESSION['captcha_time']);
 
 // Validate required fields and prepare data for LDAP creation
 $errors = [];
