@@ -38,6 +38,9 @@ directoriesToCopy.forEach((dir) => {
 // Copy individual files
 const filesToCopy = [
   "index.php",
+  "registration-stats.php", // nuevo archivo para estadísticas
+  "RegistrationLogger.php", // nuevo archivo para logger
+  "register_success.php", // nuevo archivo para mensaje de éxito
   "apple-touch-icon.png",
   "favicon-48x48.png",
   "favicon.ico",

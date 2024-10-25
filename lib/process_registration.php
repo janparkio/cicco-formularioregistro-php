@@ -368,37 +368,67 @@ foreach ($research_areas as $post_key => $value) {
     $key = strtolower(str_replace(' ', '_', preg_replace('/[^a-zA-Z0-9\s]/', '', $value)));
     $arreglo[$key] = isset($_POST[$post_key]) ? $_POST[$post_key] : '';
 }
+// Load registration logger
+$logger_path = dirname(__DIR__) . '/RegistrationLogger.php';
+if (file_exists($logger_path)) {
+    require_once $logger_path;
+    $logger = new RegistrationLogger();
+} else {
+    error_log("RegistrationLogger.php not found at: " . $logger_path);
+    $logger = null;
+}
 
 // Execute the Python script with the prepared data
 $json = json_encode($arreglo);
 $parametros = escapeshellarg(base64_encode($json));
-$success_redirect = 'https://cicco.conacyt.gov.py/register/register_success.html'; // Default success URL
+$success_redirect = '/solicitud_registro_usuario/register_success.php'; // Default success URL
 
 try {
     exec('/var/www/PY/rutina_ingreso_2023.sh validar_usuarios ' . $parametros, $output, $return);
 
     if ($return === 0 && !empty($output[0])) {
-        // If Python script succeeds and provides a URL, use that
+        // Log successful registration attempt
+        $logEntry = $logger->logAttempt($arreglo, true, [
+            'success' => true,
+            'message' => 'Registro exitoso',
+            'redirect' => $output[0]
+        ]);
+
         sendJsonResponse(true, 'Registro exitoso', [], [
             'redirect' => $output[0],
-            'source' => 'python_script'
+            'source' => 'python_script',
+            'log_id' => $logEntry['timestamp']
         ]);
     } else {
-        // If Python script fails or doesn't provide a URL, use the default success URL
         error_log("Python script execution failed or returned no URL. Return code: $return");
         error_log("Output: " . print_r($output, true));
         
+        // Log registration with default redirect
+        $logEntry = $logger->logAttempt($arreglo, true, [
+            'success' => true,
+            'message' => 'Registro exitoso',
+            'redirect' => $success_redirect
+        ]);
+        
         sendJsonResponse(true, 'Registro exitoso', [], [
             'redirect' => $success_redirect,
-            'source' => 'default_redirect'
+            'source' => 'default_redirect',
+            'log_id' => $logEntry['timestamp']
         ]);
     }
 } catch (Exception $e) {
     error_log("Exception during Python script execution: " . $e->getMessage());
     
-    // In case of any exception, still provide successful registration with default redirect
+    // Log registration attempt with exception
+    $logEntry = $logger->logAttempt($arreglo, true, [
+        'success' => true,
+        'message' => 'Registro exitoso',
+        'redirect' => $success_redirect
+    ]);
+    
     sendJsonResponse(true, 'Registro exitoso', [], [
         'redirect' => $success_redirect,
-        'source' => 'exception_fallback'
+        'source' => 'exception_fallback',
+        'log_id' => $logEntry['timestamp']
     ]);
 }
