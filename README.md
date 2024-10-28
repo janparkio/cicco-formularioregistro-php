@@ -15,13 +15,19 @@ El formulario de registro permite a los usuarios crear una cuenta en el sistema 
 ┃ ┣ 📜INSTITUCIONES_2023_NEW.json
 ┃ ┣ 📜nacionalidades.json
 ┃ ┗ 📜REGION_CIUDAD.json
-┣ 📂dist // carpeta generada al momento del despliege
+┣ 📂dist           // carpeta generada al momento del despliegue
 ┣ 📂img
 ┣ 📂lib
 ┃ ┣ 📜form_integrate_ldap.php
 ┃ ┣ 📜form-submission.js
-┃ ┣ 📜Formulario2023_NEW.html
+┃ ┣ 📜RegistrationLogger.php
 ┃ ┗ 📜procesar_ingreso_2023_NEW.php
+┣ 📂logs          // carpeta para almacenar registros
+┃ ┣ 📜attempts.json
+┃ ┗ 📜registrations.log
+┣ 📂pages         // páginas adicionales
+┃ ┣ 📜registration_stats.php
+┃ ┗ 📜register_success.php
 ┣ 📜index.php
 ┣ 📜input.css
 ┣ 📜package.json
@@ -32,54 +38,105 @@ El formulario de registro permite a los usuarios crear una cuenta en el sistema 
 ## Instalación y Configuración Local
 
 1. Clona este repositorio:
-
-   ```
+   ```bash
    git clone [URL del repositorio]
    ```
 
 2. Instala las dependencias:
-
-   ```
+   ```bash
    npm install
    ```
 
-3. Para desarrollo, ejecuta:
-
+3. Crea la carpeta logs y asegura los permisos:
+   ```bash
+   mkdir logs
+   chmod 755 logs
    ```
+
+4. Para desarrollo, ejecuta:
+   ```bash
    npm run dev
    ```
 
-4. Para construir el proyecto:
-   ```
+5. Para construir el proyecto:
+   ```bash
    npm run build
    ```
 
+## Estructura de URLs
+
+El sistema implementa una estructura de URLs limpia:
+
+- `/` - Formulario principal
+- `/registration_stats` - Estadísticas de registro (requiere autenticación)
+- `/register_success` - Página de éxito de registro
+
 ## Despliegue
 
-El contenido de la carpeta `/dist` se sube al servidor en la ruta:
+1. Ejecuta el build del proyecto:
+   ```bash
+   npm run build
+   ```
 
-```
-https://cicco.conacyt.gov.py/solicitud_registro_usuario/
-```
+2. El contenido de la carpeta `/dist` se sube al servidor en la ruta:
+   ```
+   https://cicco.conacyt.gov.py/solicitud_registro_usuario/
+   ```
 
-## Problemas Conocidos y Tareas Pendientes
+3. Asegúrate de que la carpeta `logs` en el servidor tenga los permisos correctos:
+   ```bash
+   chmod 755 logs
+   ```
 
-Actualmente, hay un problema con el envío del formulario. El servidor está devolviendo una página HTML de error en lugar de procesar los datos correctamente.
+## Sistema de Logs
 
-### Para el Desarrollador:
+El sistema ahora incluye un registro detallado de intentos de registro:
 
-1. Revisar `components/form-front.php` y `lib/form-submission.js` para asegurarse de que está manejando correctamente los datos del formulario.
-2. Verificar que la validación del CAPTCHA esté funcionando correctamente.
-3. Comprobar que las cookies para 'Organizacion' y 'Facultad' se estén leyendo y utilizando adecuadamente.
-4. Considerar devolver respuestas JSON en lugar de HTML para un mejor manejo de errores en el lado del cliente.
+- `logs/attempts.json` - Registro de todos los intentos de registro
+- `logs/registrations.log` - Log detallado del sistema
 
-### Posibles Soluciones:
+Para acceder a las estadísticas, visita `/registration_stats` con las credenciales proporcionadas.
 
-1. Implementar un registro detallado (logging) en el servidor para identificar dónde falla el procesamiento.
-2. Asegurar que todos los campos requeridos se estén enviando correctamente desde el cliente.
-3. Verificar la compatibilidad entre los datos enviados por el cliente y los esperados por el servidor.
-4. Potencialmente puede ser referente al LDAP, el cual no tengo conocimientos de como integrar.
+## Características Nuevas
+
+- Sistema de routing limpio para URLs más amigables
+- Sistema de logging mejorado para seguimiento de registros
+- Página de estadísticas con autenticación básica
+- Mejor manejo de errores y feedback al usuario
+- Optimización de assets y build process
+
+## Problemas Conocidos y Soluciones
+
+### Resueltos:
+- ✅ Estructura de URLs mejorada
+- ✅ Sistema de logs implementado
+- ✅ Manejo de assets optimizado
+- ✅ Optimización del manejo de CAPTCHA
+
+### Pendientes:
+1. Integración con LDAP [A confirmar]
+
+## Seguridad
+
+- Las credenciales para `/registration_stats` deben ser cambiadas en producción
+- Los archivos de log están protegidos fuera del directorio público
+- Se implementa autenticación básica para acceso a estadísticas
+
+## Mantenimiento
+
+Para actualizar el sistema:
+1. Realizar cambios en el código fuente
+2. Ejecutar `npm run build`
+3. Subir solo el contenido de la carpeta `/dist`
+4. Verificar permisos de carpetas y archivos en el servidor
 
 ## Contacto
 
 Para cualquier consulta o reporte de problemas, por favor contactar a ayuda@janpark.net.
+
+## Contribución
+
+1. Crear un branch para la feature: `git checkout -b feature/nueva-caracteristica`
+2. Commit de cambios: `git commit -am 'feat: agregar nueva caracteristica'`
+3. Push al branch: `git push origin feature/nueva-caracteristica`
+4. Crear Pull Request
