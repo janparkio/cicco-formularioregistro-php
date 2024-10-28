@@ -595,30 +595,30 @@
               <label for="humanidades-artes" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Humanidades
                 y Artes</label>
             </div>
-            <div class="flex items-center">
+            <!-- <div class="flex items-center">
               <input id="otras-areas" name="research-area" type="checkbox" value="otras-areas"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
               <label for="otras-areas" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Otras
                 áreas</label>
-            </div>
+            </div> -->
           </div>
           <span id="research-area-error" class="mt-2 text-sm text-red-500 hidden"></span>
         </div>
-      </div>
-
-      <!-- CAPTCHA Challenge -->
-      <div class="mt-4">
-        <label for="captcha-input" class="block text-sm font-medium text-gray-700">CAPTCHA</label>
-        <div class="mt-1 flex items-center">
-          <img id="captcha-image" src="/solicitud_registro_usuario/lib/captcha.php" alt="CAPTCHA" class="mr-2">
-          <input type="text" id="captcha-input" name="captcha" required
-                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+        
+        <!-- CAPTCHA Challenge -->
+        <div class="col-span-6 sm:col-span-4">
+          <label for="captcha-input" class="block text-sm font-medium text-gray-700">CAPTCHA</label>
+          <div class="mt-1 flex items-center">
+            <img id="captcha-image" src="/solicitud_registro_usuario/lib/captcha.php" alt="CAPTCHA" class="mr-2">
+            <input type="text" id="captcha-input" name="captcha" required
+            class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+          </div>
+          <button type="button" onclick="loadCaptcha()" class="mt-2 text-sm text-indigo-600 hover:text-indigo-500">
+            Recargar CAPTCHA
+          </button>
         </div>
-        <button type="button" onclick="loadCaptcha()" class="mt-2 text-sm text-indigo-600 hover:text-indigo-500">
-          Recargar CAPTCHA
-        </button>
       </div>
-
+        
       <!-- Error message - Logic -->
       <div id="form-error-message"
         class="hidden bg-red-100 mt-10 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">

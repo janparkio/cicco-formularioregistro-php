@@ -369,7 +369,7 @@ foreach ($research_areas as $post_key => $value) {
     $arreglo[$key] = isset($_POST[$post_key]) ? $_POST[$post_key] : '';
 }
 // Load registration logger
-$logger_path = dirname(__DIR__) . '/RegistrationLogger.php';
+$logger_path = dirname(__DIR__) . '/lib/RegistrationLogger.php';
 if (file_exists($logger_path)) {
     require_once $logger_path;
     $logger = new RegistrationLogger();

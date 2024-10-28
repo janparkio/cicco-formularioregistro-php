@@ -1,5 +1,5 @@
 <?php
-require_once 'RegistrationLogger.php';
+require_once '../lib/RegistrationLogger.php';
 
 // Basic authentication
 $valid_username = 'cicco'; // cambiar luego
@@ -22,8 +22,22 @@ $stats = $logger->getStats();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estadísticas de Registro</title>
-    <link href="output.css" rel="stylesheet">
+    <title>Estadísticas de Registro - CICCO Conacyt</title>
+    <link rel="icon" type="image/png" href="../favicon-48x48.png" sizes="48x48" />
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg" />
+    <link rel="shortcut icon" href="../favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="CICCO" />
+    <link rel="manifest" href="../site.webmanifest" />
+    <link href="../output.css" rel="stylesheet">
+    <meta name="description" content="Estadísticas de registro de usuarios para CICCO - Consejo Nacional de Ciencia y Tecnología de Paraguay">
+    <meta name="keywords" content="CICCO, Conacyt, estadísticas, registro, usuario, ciencia, tecnología, Paraguay">
+    <meta name="author" content="CICCO - Conacyt">
+    <meta property="og:title" content="Estadísticas de Registro - CICCO Conacyt">
+    <meta property="og:description" content="Estadísticas de registro de usuarios para CICCO - Conacyt">
+    <meta property="og:image" content="../img/cicco-registro-usuario-og.png">
+    <meta property="og:url" content="https://cicco.conacyt.gov.py/solicitud_registro_usuario/registration_stats.php">
+    <meta name="twitter:card" content="summary_large_image">
 </head>
 <body class="bg-gray-100 p-8">
     <div class="max-w-4xl mx-auto">
@@ -71,7 +85,7 @@ $stats = $logger->getStats();
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     <?php
-                    $logs = json_decode(file_get_contents($logger->jsonLogFile), true) ?? [];
+                    $logs = json_decode(file_get_contents($logger->getLogFile()), true) ?? [];
                     $recent_logs = array_slice($logs, -10);
                     foreach ($recent_logs as $log): 
                     ?>

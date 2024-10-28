@@ -4,8 +4,14 @@ class RegistrationLogger {
     private $jsonLogFile;
     
     public function __construct() {
-        $this->logFile = __DIR__ . '/../logs/registrations.log';
-        $this->jsonLogFile = __DIR__ . '/../logs/attempts.json';
+        // Check if running locally
+        if (in_array($_SERVER['HTTP_HOST'], ['localhost', '127.0.0.1'])) {
+            $this->logFile = '/logs/registrations.log';
+            $this->jsonLogFile = '/logs/attempts.json';
+        } else {
+            $this->logFile = __DIR__ . '/../logs/registrations.log';
+            $this->jsonLogFile = __DIR__ . '/../logs/attempts.json';
+        }
         
         // Create logs directory if it doesn't exist
         $logsDir = dirname($this->logFile);
@@ -14,6 +20,14 @@ class RegistrationLogger {
         }
     }
     
+    /**
+     * Get the path to the JSON log file
+     * @return string Path to the JSON log file
+     */
+    public function getLogFile() {
+        return $this->jsonLogFile;
+    }
+
     public function logAttempt($data, $success, $response) {
         $timestamp = date('Y-m-d H:i:s');
         $logEntry = [
