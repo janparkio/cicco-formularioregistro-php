@@ -6,13 +6,15 @@ ini_set('session.cookie_secure', '1');
 ini_set('session.cookie_httponly', '1');
 ini_set('session.cookie_samesite', 'Strict');
 ini_set('session.use_strict_mode', '1');
-
 // Start session before any output
 session_start();
 
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 header('Content-Type: application/json');
+
+// Log raw POST data for debugging
+error_log('Raw POST data received: ' . print_r($_POST, true));
 
 // Debug session information
 error_log("Session ID: " . session_id());
@@ -319,26 +321,34 @@ $research_areas = [
     'et_pb_contact_area_investigacion_0_23_4' => 'Ciencias Sociales',
     'et_pb_contact_area_investigacion_0_23_5' => 'Humanidades y Artes'
 ];
+// Add debug logging for research areas validation
+error_log('Validating research areas...');
+error_log('Research areas in POST: ' . print_r(array_intersect_key($_POST, $research_areas), true));
 
 $area_selected = false;
 foreach ($research_areas as $post_key => $expected_value) {
+    error_log("Checking research area: $post_key => $expected_value");
     if (isset($_POST[$post_key]) && $_POST[$post_key] === $expected_value) {
+        error_log("Found selected area: $expected_value");
         $area_selected = true;
         break;
     }
 }
 
 if (!$area_selected) {
+    error_log('No research areas selected');
     $MSJ_ERROR .= "Dominio científico de su interés" . $separador;
     $errors[] = "Debe seleccionar al menos un área de investigación.";
 }
 
 // If there are errors, return them
 if (!empty($errors)) {
+    error_log('Validation errors found: ' . print_r($errors, true));
     sendJsonResponse(false, 'Por favor, corrija los errores señalados', $errors, ['MSJ_ERROR' => $MSJ_ERROR]);
 }
 
 // Prepare data for LDAP creation
+error_log('Preparing LDAP data...');
 $arreglo = [
     "accion" => "validar_usuarios",
     "metodo" => $_SERVER['REQUEST_METHOD'],
@@ -363,16 +373,20 @@ $arreglo = [
     "ciudad" => $_POST['et_pb_contact_ciudad_0']
 ];
 
+error_log('Processing research areas...');
 // Add research areas to the array
 foreach ($research_areas as $post_key => $value) {
     $key = strtolower(str_replace(' ', '_', preg_replace('/[^a-zA-Z0-9\s]/', '', $value)));
     $arreglo[$key] = isset($_POST[$post_key]) ? $_POST[$post_key] : '';
 }
+
 // Load registration logger
 $logger_path = dirname(__DIR__) . '/lib/RegistrationLogger.php';
+error_log("Attempting to load logger from: $logger_path");
 if (file_exists($logger_path)) {
     require_once $logger_path;
     $logger = new RegistrationLogger();
+    error_log("Logger loaded successfully");
 } else {
     error_log("RegistrationLogger.php not found at: " . $logger_path);
     $logger = null;
@@ -380,13 +394,16 @@ if (file_exists($logger_path)) {
 
 // Execute the Python script with the prepared data
 $json = json_encode($arreglo);
+error_log('Encoded data for Python script: ' . $json);
 $parametros = escapeshellarg(base64_encode($json));
 $success_redirect = '/solicitud_registro_usuario/register_success'; // Default success URL
 
 try {
+    error_log('Executing Python script...');
     exec('/var/www/PY/rutina_ingreso_2023.sh validar_usuarios ' . $parametros, $output, $return);
 
     if ($return === 0 && !empty($output[0])) {
+        error_log('Python script executed successfully');
         // Log successful registration attempt
         $logEntry = $logger->logAttempt($arreglo, true, [
             'success' => true,
@@ -419,7 +436,6 @@ try {
             'message' => 'Registro exitoso',
             'redirect' => $success_redirect
         ]);
-
         // Store form data in session
         $_SESSION['form_data'] = $_POST;
 
@@ -429,7 +445,8 @@ try {
             $debugData = [
                 'formData' => $_POST,
                 'processedData' => $arreglo,
-                'timestamp' => date('Y-m-d H:i:s')
+                'timestamp' => date('Y-m-d H:i:s'),
+                'redirect' => $success_redirect
             ];
         }
 
@@ -437,8 +454,7 @@ try {
             'redirect' => $success_redirect,
             'source' => 'default_redirect', 
             'log_id' => $logEntry['timestamp'],
-            'debug' => $debugData,  // Properly structured debug data
-            'raw_post' => isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true' ? $_POST : null // Add raw POST data for debugging
+            'debug' => $debugData  // Send the entire debug object
         ]);
     }
 } catch (Exception $e) {
