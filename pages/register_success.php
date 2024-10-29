@@ -17,7 +17,7 @@
     <meta property="og:title" content="Formulario de Registro - CICCO Conacyt">
     <meta property="og:description" content="Registro de usuario para acceder a los servicios de CICCO - Conacyt">
     <meta property="og:image" content="../img/cicco-registro-usuario-og.png">
-    <meta property="og:url" content="https://cicco.conacyt.gov.py/solicitud_registro_usuario/register_success.php">
+    <meta property="og:url" content="https://cicco.conacyt.gov.py/solicitud_registro_usuario/register_success">
     <meta name="twitter:card" content="summary_large_image">
 </head>
 <body>

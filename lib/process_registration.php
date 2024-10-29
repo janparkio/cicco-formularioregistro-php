@@ -381,7 +381,7 @@ if (file_exists($logger_path)) {
 // Execute the Python script with the prepared data
 $json = json_encode($arreglo);
 $parametros = escapeshellarg(base64_encode($json));
-$success_redirect = '/solicitud_registro_usuario/register_success.php'; // Default success URL
+$success_redirect = '/solicitud_registro_usuario/register_success'; // Default success URL
 
 try {
     exec('/var/www/PY/rutina_ingreso_2023.sh validar_usuarios ' . $parametros, $output, $return);
