@@ -424,16 +424,21 @@ try {
         $_SESSION['form_data'] = $_POST;
 
         // Prepare debug data if enabled
-        $debugData = [];
+        $debugData = null;
         if (isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true') {
-            $debugData['formData'] = $_POST;
+            $debugData = [
+                'formData' => $_POST,
+                'processedData' => $arreglo,
+                'timestamp' => date('Y-m-d H:i:s')
+            ];
         }
-        
+
         sendJsonResponse(true, 'Registro exitoso', [], [
             'redirect' => $success_redirect,
-            'source' => 'default_redirect',
+            'source' => 'default_redirect', 
             'log_id' => $logEntry['timestamp'],
-            'formData' => $debugData
+            'debug' => $debugData,  // Properly structured debug data
+            'raw_post' => isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true' ? $_POST : null // Add raw POST data for debugging
         ]);
     }
 } catch (Exception $e) {
