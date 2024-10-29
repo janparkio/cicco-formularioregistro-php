@@ -27,8 +27,10 @@ class RegistrationLogger {
     public function getLogFile() {
         return $this->jsonLogFile;
     }
-
     public function logAttempt($data, $success, $response) {
+        // Add debug logging
+        error_log('Debug - Received Form Data: ' . print_r($data, true));
+        
         // Get current timestamp for log entry
         $timestamp = date('Y-m-d H:i:s');
         
@@ -77,6 +79,9 @@ class RegistrationLogger {
             'captcha_used' => isset($_SESSION['captcha_validated']), // Only log if CAPTCHA was used, not the value
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown'
         ];
+
+        // Add debug logging for the processed entry
+        error_log('Debug - Processed Log Entry: ' . print_r($logEntry, true));
 
         // Format and append a text log entry with key registration details
         // Format: [timestamp] ip | success | user info | institution | role

@@ -397,10 +397,17 @@ try {
         // Store form data in session
         $_SESSION['form_data'] = $_POST;
 
+        // Prepare debug data if enabled
+        $debugData = [];
+        if (isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true') {
+            $debugData['formData'] = $_POST;
+        }
+
         sendJsonResponse(true, 'Registro exitoso', [], [
             'redirect' => $output[0],
             'source' => 'python_script',
-            'log_id' => $logEntry['timestamp']
+            'log_id' => $logEntry['timestamp'],
+            'formData' => $debugData
         ]);
     } else {
         error_log("Python script execution failed or returned no URL. Return code: $return");
@@ -415,11 +422,18 @@ try {
 
         // Store form data in session
         $_SESSION['form_data'] = $_POST;
+
+        // Prepare debug data if enabled
+        $debugData = [];
+        if (isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true') {
+            $debugData['formData'] = $_POST;
+        }
         
         sendJsonResponse(true, 'Registro exitoso', [], [
             'redirect' => $success_redirect,
             'source' => 'default_redirect',
-            'log_id' => $logEntry['timestamp']
+            'log_id' => $logEntry['timestamp'],
+            'formData' => $debugData
         ]);
     }
 } catch (Exception $e) {
@@ -434,10 +448,17 @@ try {
 
     // Store form data in session
     $_SESSION['form_data'] = $_POST;
+
+    // Prepare debug data if enabled
+    $debugData = [];
+    if (isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true') {
+        $debugData['formData'] = $_POST;
+    }
     
     sendJsonResponse(true, 'Registro exitoso', [], [
         'redirect' => $success_redirect,
         'source' => 'exception_fallback',
-        'log_id' => $logEntry['timestamp']
+        'log_id' => $logEntry['timestamp'],
+        'formData' => $debugData
     ]);
 }

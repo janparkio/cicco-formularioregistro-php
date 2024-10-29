@@ -79,13 +79,19 @@
                 </div>
             </div>
         </div>
-        <script>
-            <?php if (isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true'): ?>
-            console.log('Form Data:', <?php 
-                $debugData = $_SESSION['form_data'] ?? [];
-                echo json_encode($debugData, JSON_PRETTY_PRINT);
+    </div>
+    <?php if (isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true'): ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.group('Form Submission Debug Data');
+            console.log('Session Form Data:', <?php 
+                echo json_encode($_SESSION['form_data'] ?? [], 
+                    JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE
+                ); 
             ?>);
-            <?php endif; ?>
-        </script>
-    </body>
+            console.groupEnd();
+        });
+    </script>
+    <?php endif; ?>
+</body>
 </html>
