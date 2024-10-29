@@ -20,38 +20,72 @@
     <meta property="og:url" content="https://cicco.conacyt.gov.py/solicitud_registro_usuario/register_success.php">
     <meta name="twitter:card" content="summary_large_image">
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-        <div class="text-center">
-            <svg class="mx-auto h-16 w-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-            </svg>
-            <h1 class="mt-4 text-3xl font-bold text-gray-900">¡Registro Exitoso!</h1>
-            <p class="mt-4 text-lg text-gray-600">
-                Su solicitud de registro ha sido recibida correctamente.
-            </p>
-            <div class="mt-6 space-y-4">
-                <p class="text-gray-700">
-                    Recibirá sus credenciales de acceso en el correo electrónico registrado dentro de las próximas 72 horas hábiles.
-                </p>
-                <div class="bg-gray-50 p-4 rounded-lg">
-                    <p class="text-gray-700 font-medium mb-2">Información adicional:</p>
-                    <ul class="text-gray-600 space-y-2">
-                        <li>Revise su carpeta de correo no deseado (SPAM)</li>
-                        <li>Si no recibe sus credenciales después de 72 horas hábiles, contáctenos vía WhatsApp: +595 991 838 829</li>
-                    </ul>
+<body>
+    <div class="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
+        <div class="relative py-3 sm:max-w-xl sm:mx-auto">
+            <div class="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
+                <div class="max-w-md mx-auto">
+                    <div class="divide-y divide-gray-200">
+                        <div class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
+                            <div class="text-center">
+                                <svg class="mx-auto h-16 w-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <h1 class="text-2xl font-bold text-green-600 mb-4">¡Registro Exitoso!</h1>
+                                <?php if (isset($_SESSION['form_data'])): ?>
+                                <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                                    <p class="font-medium text-gray-800">
+                                        Gracias <?php echo htmlspecialchars($_SESSION['form_data']['et_pb_contact_nombres_0']); ?>!
+                                    </p>
+                                    <p class="text-gray-600">
+                                        Enviaremos tus credenciales a:<br>
+                                        <span class="font-medium"><?php echo htmlspecialchars($_SESSION['form_data']['et_pb_contact_email_0']); ?></span>
+                                    </p>
+                                </div>
+                                <?php endif; ?>
+                                <p class="mt-4 text-lg text-gray-600">
+                                    Su solicitud de registro ha sido recibida correctamente.
+                                </p>
+                                <div class="mt-6 space-y-4">
+                                    <p class="text-gray-700">
+                                        Recibirá sus credenciales de acceso en el correo electrónico registrado dentro de las próximas 72 horas hábiles.
+                                    </p>
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <p class="text-gray-700 font-medium mb-2">Información adicional:</p>
+                                        <ul class="text-gray-600 space-y-2">
+                                            <li>Revise su carpeta de correo no deseado (SPAM)</li>
+                                            <li>Si no recibe sus credenciales después de 72 horas hábiles, contáctenos vía WhatsApp: +595 991 838 829</li>
+                                        </ul>
+                                    </div>
+                                    <p class="text-sm text-gray-500 italic">
+                                        *Para garantizar la compatibilidad con diferentes clientes de correo electrónico, se han omitido los signos diacríticos.
+                                    </p>
+                                </div>
+                                <div class="mt-8 space-y-4">
+                                    <a href="/" 
+                                       class="inline-block bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 transition-colors">
+                                        Volver al Inicio
+                                    </a>
+                                    <div>
+                                        <a href="/solicitud_registro_usuario" 
+                                           class="inline-block text-gray-600 hover:text-gray-800 underline text-sm mt-2">
+                                            ¿Datos incorrectos? Registrarse nuevamente
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <p class="text-sm text-gray-500 italic">
-                    *Para garantizar la compatibilidad con diferentes clientes de correo electrónico, se han omitido los signos diacríticos.
-                </p>
-            </div>
-            <div class="mt-8">
-                <a href="/" 
-                   class="inline-block bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 transition-colors">
-                    Volver al Inicio
-                </a>
             </div>
         </div>
-    </div>
-</body>
+        <script>
+            <?php if (isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true'): ?>
+            console.log('Form Data:', <?php 
+                $debugData = $_SESSION['form_data'] ?? [];
+                echo json_encode($debugData, JSON_PRETTY_PRINT);
+            ?>);
+            <?php endif; ?>
+        </script>
+    </body>
 </html>

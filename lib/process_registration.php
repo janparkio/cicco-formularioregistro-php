@@ -394,6 +394,9 @@ try {
             'redirect' => $output[0]
         ]);
 
+        // Store form data in session
+        $_SESSION['form_data'] = $_POST;
+
         sendJsonResponse(true, 'Registro exitoso', [], [
             'redirect' => $output[0],
             'source' => 'python_script',
@@ -409,6 +412,9 @@ try {
             'message' => 'Registro exitoso',
             'redirect' => $success_redirect
         ]);
+
+        // Store form data in session
+        $_SESSION['form_data'] = $_POST;
         
         sendJsonResponse(true, 'Registro exitoso', [], [
             'redirect' => $success_redirect,
@@ -425,6 +431,9 @@ try {
         'message' => 'Registro exitoso',
         'redirect' => $success_redirect
     ]);
+
+    // Store form data in session
+    $_SESSION['form_data'] = $_POST;
     
     sendJsonResponse(true, 'Registro exitoso', [], [
         'redirect' => $success_redirect,

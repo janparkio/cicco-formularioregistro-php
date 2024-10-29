@@ -29,54 +29,69 @@ class RegistrationLogger {
     }
 
     public function logAttempt($data, $success, $response) {
+        // Get current timestamp for log entry
         $timestamp = date('Y-m-d H:i:s');
+        
+        // Build log entry array with user registration data and metadata
         $logEntry = [
             'timestamp' => $timestamp,
             'ip' => $_SERVER['REMOTE_ADDR'],
             'success' => $success,
             'request_data' => [
-                'nombres' => $data['nombres'] ?? null,
-                'apellidos' => $data['apellidos'] ?? null,
-                'email' => $data['email'] ?? null,
-                'dni' => $data['uid'] ?? null,
-                'instituciones' => $data['instituciones'] ?? null,
-                'cargo_institucion' => $data['cargo_institucion'] ?? null,
-                'nacionalidad' => $data['nacionalidad'] ?? null,
-                'sexo' => $data['sexo'] ?? null,
-                'nacimiento' => $data['nacimiento'] ?? null,
-                'telefono' => $data['telefono'] ?? null,
-                'facultad' => $data['facultad'] ?? null,
-                'carrera' => $data['carrera'] ?? null,
-                'categoria_pronii' => $data['categoria_pronii'] ?? null,
-                'contact_orcid' => $data['contact_orcid'] ?? null,
-                'contact_scopus' => $data['contact_scopus'] ?? null,
-                'contact_wos' => $data['contact_wos'] ?? null,
-                'departamento' => $data['departamento'] ?? null,
-                'ciudad' => $data['ciudad'] ?? null,
-                'ciencias_naturales' => $data['ciencias_naturales'] ?? null,
-                'ingenieria_y_tecnologia' => $data['ingenieria_y_tecnologia'] ?? null,
-                'ciencias_medicas_y_de_la_salud' => $data['ciencias_medicas_y_de_la_salud'] ?? null,
-                'ciencias_agricolas' => $data['ciencias_agricolas'] ?? null,
-                'ciencias_sociales' => $data['ciencias_sociales'] ?? null,
-                'humanidades' => $data['humanidades'] ?? null,
+                // Personal information
+                'fecha_ingreso' => $data['et_pb_contact_fecha_ingreso_0'] ?? null,
+                'nombres' => $data['et_pb_contact_nombres_0'] ?? null,
+                'apellidos' => $data['et_pb_contact_apellidos_0'] ?? null,
+                'dni' => $data['et_pb_contact_dni_0'] ?? null,
+                'nacionalidad' => $data['et_pb_contact_nacionalidad_0'] ?? null,
+                'sexo' => $data['et_pb_contact_genero_0'] ?? null,
+                'nacimiento' => $data['et_pb_contact_fecha_nacimiento_0'] ?? null,
+                'telefono' => $data['et_pb_contact_phone_0'] ?? null,
+                'email' => $data['et_pb_contact_email_0'] ?? null,
+                
+                // Institutional information
+                'instituciones' => $data['organizacion'] ?? null,
+                'facultad' => $data['organizacion_facultad'] ?? null,
+                'carrera' => $data['organizacion_facultad_carrera'] ?? null,
+                'cargo_institucion' => $data['et_pb_contact_rol_0'] ?? null,
+                'categoria_pronii' => $data['et_pb_contact_pronii_categoria_0'] ?? null,
+                
+                // Research identifiers
+                'contact_orcid' => $data['et_pb_contact_orcid_0'] ?? null,
+                'contact_scopus' => $data['et_pb_contact_scopus_0'] ?? null,
+                'contact_wos' => $data['et_pb_contact_wos_0'] ?? null,
+                
+                // Location data
+                'departamento' => $data['et_pb_contact_departamento_0'] ?? null,
+                'ciudad' => $data['et_pb_contact_ciudad_0'] ?? null,
+                
+                // Research areas
+                'ciencias_naturales' => $data['et_pb_contact_area_investigacion_0_23_0'] ?? null,
+                'ingenieria_y_tecnologia' => $data['et_pb_contact_area_investigacion_0_23_1'] ?? null,
+                'ciencias_medicas_y_de_la_salud' => $data['et_pb_contact_area_investigacion_0_23_2'] ?? null,
+                'ciencias_agricolas' => $data['et_pb_contact_area_investigacion_0_23_3'] ?? null,
+                'ciencias_sociales' => $data['et_pb_contact_area_investigacion_0_23_4'] ?? null,
+                'humanidades' => $data['et_pb_contact_area_investigacion_0_23_5'] ?? null
             ],
             'response' => $response,
-            'captcha_used' => isset($_SESSION['captcha_validated']), // Don't log actual CAPTCHA value for security
+            'captcha_used' => isset($_SESSION['captcha_validated']), // Only log if CAPTCHA was used, not the value
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown'
         ];
 
-        // Text log
+        // Format and append a text log entry with key registration details
+        // Format: [timestamp] ip | success | user info | institution | role
         $textLog = sprintf(
             "[%s] %s | Success: %s | User: %s %s (%s) | Institution: %s | Role: %s\n",
             $timestamp,
             $_SERVER['REMOTE_ADDR'],
-            $success ? 'YES' : 'NO',
-            $data['nombres'] ?? 'N/A',
-            $data['apellidos'] ?? 'N/A',
-            $data['email'] ?? 'N/A',
-            $data['instituciones'] ?? 'N/A',
-            $data['cargo_institucion'] ?? 'N/A'
+            $success ? 'YES' : 'NO', 
+            $data['et_pb_contact_nombres_0'] ?? 'N/A', // First name
+            $data['et_pb_contact_apellidos_0'] ?? 'N/A', // Last name
+            $data['et_pb_contact_email_0'] ?? 'N/A', // Email
+            $data['organizacion'] ?? 'N/A', // Institution name
+            $data['et_pb_contact_rol_0'] ?? 'N/A' // Institutional role
         );
+        // Append the log entry to the text log file
         file_put_contents($this->logFile, $textLog, FILE_APPEND);
 
         // JSON log
