@@ -40,40 +40,40 @@ class RegistrationLogger {
             'ip' => $_SERVER['REMOTE_ADDR'],
             'success' => $success,
             'request_data' => [
-                // Personal information - supporting both new and legacy form field names
-                'fecha_ingreso' => $data['fecha-ingreso'] ?? $data['et_pb_contact_fecha_ingreso_0'] ?? null,
-                'nombres' => $data['first-name'] ?? $data['et_pb_contact_nombres_0'] ?? null,
-                'apellidos' => $data['last-name'] ?? $data['et_pb_contact_apellidos_0'] ?? null,
-                'dni' => $data['id-number'] ?? $data['et_pb_contact_dni_0'] ?? null,
-                'nacionalidad' => $data['nationality'] ?? $data['et_pb_contact_nacionalidad_0'] ?? null,
-                'sexo' => $data['gender'] ?? $data['et_pb_contact_genero_0'] ?? null,
-                'nacimiento' => $data['birth-date'] ?? $data['et_pb_contact_fecha_nacimiento_0'] ?? null,
-                'telefono' => $data['mobile-phone'] ?? $data['et_pb_contact_phone_0'] ?? null,
-                'email' => $data['institutional-email'] ?? $data['et_pb_contact_email_0'] ?? null,
+                // Personal information - match exact field names from form
+                'fecha_ingreso' => $data['et_pb_contact_fecha_ingreso_0'] ?? null,
+                'nombres' => $data['et_pb_contact_nombres_0'] ?? null,
+                'apellidos' => $data['et_pb_contact_apellidos_0'] ?? null,
+                'dni' => $data['et_pb_contact_dni_0'] ?? null,
+                'nacionalidad' => $data['et_pb_contact_nacionalidad_0'] ?? null,
+                'sexo' => $data['et_pb_contact_genero_0'] ?? null,
+                'nacimiento' => $data['et_pb_contact_fecha_nacimiento_0'] ?? null,
+                'telefono' => $data['et_pb_contact_phone_0'] ?? null,
+                'email' => $data['et_pb_contact_email_0'] ?? null,
                 
                 // Institutional information
-                'instituciones' => $data['institution-name'] ?? $data['organizacion'] ?? null,
-                'facultad' => $data['campus-faculty'] ?? $data['organizacion_facultad'] ?? null,
-                'carrera' => $data['specific-unit-career'] ?? $data['organizacion_facultad_carrera'] ?? null,
-                'cargo_institucion' => $data['institutional-role'] ?? $data['et_pb_contact_rol_0'] ?? null,
-                'categoria_pronii' => $data['pronii-category'] ?? $data['et_pb_contact_pronii_categoria_0'] ?? null,
+                'instituciones' => $data['organizacion'] ?? null,
+                'facultad' => $data['organizacion_facultad'] ?? null,
+                'carrera' => $data['organizacion_facultad_carrera'] ?? null,
+                'cargo_institucion' => $data['et_pb_contact_rol_0'] ?? null,
+                'categoria_pronii' => $data['et_pb_contact_pronii_categoria_0'] ?? null,
                 
                 // Research identifiers
-                'contact_orcid' => $data['orcid-id'] ?? $data['et_pb_contact_orcid_0'] ?? null,
-                'contact_scopus' => $data['scopus-id'] ?? $data['et_pb_contact_scopus_0'] ?? null,
-                'contact_wos' => $data['wos-id'] ?? $data['et_pb_contact_wos_0'] ?? null,
+                'contact_orcid' => $data['et_pb_contact_orcid_0'] ?? null,
+                'contact_scopus' => $data['et_pb_contact_scopus_0'] ?? null,
+                'contact_wos' => $data['et_pb_contact_wos_0'] ?? null,
                 
                 // Location data
-                'departamento' => $data['department'] ?? $data['et_pb_contact_departamento_0'] ?? null,
-                'ciudad' => $data['city'] ?? $data['et_pb_contact_ciudad_0'] ?? null,
+                'departamento' => $data['et_pb_contact_departamento_0'] ?? null,
+                'ciudad' => $data['et_pb_contact_ciudad_0'] ?? null,
                 
-                // Research areas
-                'ciencias_naturales' => $data['research-area-natural'] ?? $data['et_pb_contact_area_investigacion_0_23_0'] ?? null,
-                'ingenieria_y_tecnologia' => $data['research-area-engineering'] ?? $data['et_pb_contact_area_investigacion_0_23_1'] ?? null,
-                'ciencias_medicas_y_de_la_salud' => $data['research-area-medical'] ?? $data['et_pb_contact_area_investigacion_0_23_2'] ?? null,
-                'ciencias_agricolas' => $data['research-area-agricultural'] ?? $data['et_pb_contact_area_investigacion_0_23_3'] ?? null,
-                'ciencias_sociales' => $data['research-area-social'] ?? $data['et_pb_contact_area_investigacion_0_23_4'] ?? null,
-                'humanidades' => $data['research-area-humanities'] ?? $data['et_pb_contact_area_investigacion_0_23_5'] ?? null
+                // Research areas - exact field names
+                'ciencias_naturales' => $data['et_pb_contact_area_investigacion_0_23_0'] ?? null,
+                'ingenieria_y_tecnologia' => $data['et_pb_contact_area_investigacion_0_23_1'] ?? null,
+                'ciencias_medicas_y_de_la_salud' => $data['et_pb_contact_area_investigacion_0_23_2'] ?? null,
+                'ciencias_agricolas' => $data['et_pb_contact_area_investigacion_0_23_3'] ?? null,
+                'ciencias_sociales' => $data['et_pb_contact_area_investigacion_0_23_4'] ?? null,
+                'humanidades' => $data['et_pb_contact_area_investigacion_0_23_5'] ?? null
             ],
             'response' => $response,
             'captcha_used' => isset($_SESSION['captcha_validated']), // Track if CAPTCHA validation was used
@@ -90,11 +90,11 @@ class RegistrationLogger {
             $timestamp,
             $_SERVER['REMOTE_ADDR'],
             $success ? 'YES' : 'NO', 
-            $data['first-name'] ?? $data['et_pb_contact_nombres_0'] ?? 'N/A',
-            $data['last-name'] ?? $data['et_pb_contact_apellidos_0'] ?? 'N/A',
-            $data['institutional-email'] ?? $data['et_pb_contact_email_0'] ?? 'N/A',
-            $data['institution-name'] ?? $data['organizacion'] ?? 'N/A',
-            $data['institutional-role'] ?? $data['et_pb_contact_rol_0'] ?? 'N/A'
+            $data['et_pb_contact_nombres_0'] ?? 'N/A',
+            $data['et_pb_contact_apellidos_0'] ?? 'N/A',
+            $data['et_pb_contact_email_0'] ?? 'N/A',
+            $data['organizacion'] ?? 'N/A',
+            $data['et_pb_contact_rol_0'] ?? 'N/A'
         );
 
         // Append the log entry to the text log file

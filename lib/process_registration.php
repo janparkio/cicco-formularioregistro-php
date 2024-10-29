@@ -405,21 +405,22 @@ try {
     if ($return === 0 && !empty($output[0])) {
         error_log('Python script executed successfully');
         // Log successful registration attempt
-        $logEntry = $logger->logAttempt($arreglo, true, [
+        $logEntry = $logger->logAttempt($_POST, true, [
             'success' => true,
             'message' => 'Registro exitoso',
             'redirect' => $output[0]
         ]);
 
-        // Store form data in session
+        // Store form data in session for success page
         $_SESSION['form_data'] = $_POST;
 
-        // Prepare debug data if enabled
+        // Prepare debug data if enabled - useful for troubleshooting
         $debugData = [];
         if (isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true') {
             $debugData['formData'] = $_POST;
         }
 
+        // Send success response with redirect URL from Python script
         sendJsonResponse(true, 'Registro exitoso', [], [
             'redirect' => $output[0],
             'source' => 'python_script',
@@ -427,59 +428,35 @@ try {
             'formData' => $debugData
         ]);
     } else {
-        error_log("Python script execution failed or returned no URL. Return code: $return");
+        // Script execution failed - log error details
+        error_log("Python script execution failed. Return code: $return");
         error_log("Output: " . print_r($output, true));
         
-        // Log registration with default redirect
-        $logEntry = $logger->logAttempt($arreglo, true, [
-            'success' => true,
-            'message' => 'Registro exitoso',
-            'redirect' => $success_redirect
+        // Log failed registration attempt with error details
+        $logEntry = $logger->logAttempt($_POST, false, [
+            'success' => false,
+            'message' => 'Error en el procesamiento del registro',
+            'error_code' => $return,
+            'script_output' => $output
         ]);
-        // Store form data in session
-        $_SESSION['form_data'] = $_POST;
 
-        // Prepare debug data if enabled
-        $debugData = null;
-        if (isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true') {
-            $debugData = [
-                'formData' => $_POST,
-                'processedData' => $arreglo,
-                'timestamp' => date('Y-m-d H:i:s'),
-                'redirect' => $success_redirect
-            ];
-        }
-
-        sendJsonResponse(true, 'Registro exitoso', [], [
-            'redirect' => $success_redirect,
-            'source' => 'default_redirect', 
-            'log_id' => $logEntry['timestamp'],
-            'debug' => $debugData  // Send the entire debug object
+        // Send error response with details for debugging
+        sendJsonResponse(false, 'Error en el procesamiento del registro', ['Error interno del servidor'], [
+            'error_code' => $return,
+            'script_output' => $output
         ]);
     }
 } catch (Exception $e) {
+    // Unexpected error during script execution
     error_log("Exception during Python script execution: " . $e->getMessage());
     
-    // Log registration attempt with exception
-    $logEntry = $logger->logAttempt($arreglo, true, [
-        'success' => true,
-        'message' => 'Registro exitoso',
-        'redirect' => $success_redirect
+    // Log failed registration attempt with exception details
+    $logEntry = $logger->logAttempt($_POST, false, [
+        'success' => false,
+        'message' => 'Error en el procesamiento del registro',
+        'error' => $e->getMessage()
     ]);
 
-    // Store form data in session
-    $_SESSION['form_data'] = $_POST;
-
-    // Prepare debug data if enabled
-    $debugData = [];
-    if (isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true') {
-        $debugData['formData'] = $_POST;
-    }
-    
-    sendJsonResponse(true, 'Registro exitoso', [], [
-        'redirect' => $success_redirect,
-        'source' => 'exception_fallback',
-        'log_id' => $logEntry['timestamp'],
-        'formData' => $debugData
-    ]);
+    // Send generic error response to avoid exposing internal details
+    sendJsonResponse(false, 'Error en el procesamiento del registro', ['Error interno del servidor']);
 }
