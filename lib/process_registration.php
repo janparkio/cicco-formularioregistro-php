@@ -270,11 +270,16 @@ foreach ($required_fields as $field => $label) {
             break;
             
         case 'organizacion':
-            if (isset($_COOKIE["Organizacion"])) {
-                if (strcmp($value, $_COOKIE["Organizacion"]) !== 0) {
-                    $MSJ_ERROR .= "Institución" . $separador;
-                    $errors[] = "Institución no coincide con la seleccionada.";
-                }
+            // Commented out cookie validation since it's not needed
+            // if (isset($_COOKIE["Organizacion"])) {
+            //     if (strcmp($value, $_COOKIE["Organizacion"]) !== 0) {
+            //         $MSJ_ERROR .= "Institución" . $separador;
+            //         $errors[] = "Institución no coincide con la seleccionada.";
+            //     }
+            // }
+            if (empty($value)) {
+                $MSJ_ERROR .= "Institución" . $separador;
+                $errors[] = "Institución es requerida.";
             }
             break;
             
