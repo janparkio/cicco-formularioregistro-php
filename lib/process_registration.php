@@ -405,7 +405,7 @@ $success_redirect = '/solicitud_registro_usuario/register_success'; // Default s
 
 try {
     error_log('Executing Python script...');
-    exec('/var/www/PY/rutina_ingreso_2023.sh validar_usuarios ' . $parametros, $output, $return);
+    exec('/var/www/PY/rutina_ingreso_2023.sh validar_usuarios ' . $parametros, $output, result_code: $return);
 
     if ($return === 0 && !empty($output[0])) {
         error_log('Python script executed successfully');
