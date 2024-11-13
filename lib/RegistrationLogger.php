@@ -27,7 +27,40 @@ class RegistrationLogger {
     public function getLogFile() {
         return $this->jsonLogFile;
     }
-    public function logAttempt($data, $success, $response) {
+
+    /**
+     * Log script data before execution
+     */
+    public function logScriptData($scriptData, $encodedData) {
+        // Instead of creating a separate log entry, store the data to be merged later
+        return [
+            'script_preparation' => [
+                'timestamp' => date('Y-m-d H:i:s'),
+                'data_to_encode' => $scriptData,
+                'encoded_data' => $encodedData,
+                'decoded_verification' => json_decode(base64_decode($encodedData), true)
+            ]
+        ];
+    }
+
+    /**
+     * Log script execution response
+     */
+    public function logScriptResponse($output, $returnCode) {
+        // Instead of creating a separate log entry, store the response to be merged later
+        return [
+            'script_execution' => [
+                'timestamp' => date('Y-m-d H:i:s'),
+                'output' => $output,
+                'return_code' => $returnCode
+            ]
+        ];
+    }
+
+    /**
+     * Enhanced logAttempt to include script data
+     */
+    public function logAttempt($data, $success, $response, $scriptLog = null) {
         // Log raw data for debugging
         error_log('Debug - Raw data received by logger: ' . print_r($data, true));
         
@@ -68,11 +101,11 @@ class RegistrationLogger {
                 
                 // Research areas
                 'ciencias_naturales' => $data['et_pb_contact_area_investigacion_0_23_0'] ?? null,
-                'ingenieria_y_tecnologia' => $data['et_pb_contact_area_investigacion_0_23_1'] ?? null,
-                'ciencias_medicas_y_de_la_salud' => $data['et_pb_contact_area_investigacion_0_23_2'] ?? null,
-                'ciencias_agricolas' => $data['et_pb_contact_area_investigacion_0_23_3'] ?? null,
+                'ingenieria_tecnologia' => $data['et_pb_contact_area_investigacion_0_23_1'] ?? null,
+                'ciencias_medicas_salud' => $data['et_pb_contact_area_investigacion_0_23_2'] ?? null,
+                'ciencias_agricolas_veterinarias' => $data['et_pb_contact_area_investigacion_0_23_3'] ?? null,
                 'ciencias_sociales' => $data['et_pb_contact_area_investigacion_0_23_4'] ?? null,
-                'humanidades' => $data['et_pb_contact_area_investigacion_0_23_5'] ?? null
+                'humanidades_artes' => $data['et_pb_contact_area_investigacion_0_23_5'] ?? null
             ],
             'response' => $response,
             'captcha_used' => isset($_SESSION['captcha_validated']),
@@ -81,7 +114,9 @@ class RegistrationLogger {
             'python_script' => [
                 'success' => $success,
                 'output' => $response['script_output'] ?? null,
-                'error_code' => $response['error_code'] ?? null
+                'error_code' => $response['error_code'] ?? null,
+                'preparation' => $scriptLog['script_preparation'] ?? null,
+                'execution' => $scriptLog['script_execution'] ?? null
             ]
         ];
 

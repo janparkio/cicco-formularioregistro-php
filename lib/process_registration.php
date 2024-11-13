@@ -1,4 +1,55 @@
 <?php
+require_once(__DIR__ . '/validation-utils.php');
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    error_log("PHP Error: [$errno] $errstr in $errfile on line $errline");
+    
+    // Ensure headers haven't been sent
+    if (!headers_sent()) {
+        header('HTTP/1.1 500 Internal Server Error');
+        header('Content-Type: application/json');
+    }
+    
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error interno del servidor',
+        'debug' => [
+            'error' => $errstr,
+            'file' => basename($errfile),
+            'line' => $errline,
+            'type' => 'php_error'
+        ]
+    ]);
+    exit;
+});
+
+set_exception_handler(function($e) {
+    error_log("Unhandled Exception: " . $e->getMessage());
+    
+    // Ensure headers haven't been sent
+    if (!headers_sent()) {
+        header('HTTP/1.1 500 Internal Server Error');
+        header('Content-Type: application/json');
+    }
+    
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error interno del servidor',
+        'debug' => [
+            'error' => $e->getMessage(),
+            'file' => basename($e->getFile()),
+            'line' => $e->getLine(),
+            'type' => 'exception'
+        ]
+    ]);
+    exit;
+});
+
+error_log('=== Starting Registration Process ===');
+error_log('Request Method: ' . $_SERVER['REQUEST_METHOD']);
+error_log('Content Type: ' . ($_SERVER['CONTENT_TYPE'] ?? 'Not Set'));
+error_log('Session ID: ' . session_id());
+error_log('POST Data: ' . print_r($_POST, true));
+
 // Start with session configuration
 ini_set('session.cookie_path', '/solicitud_registro_usuario/');
 ini_set('session.cookie_domain', '');
@@ -6,6 +57,7 @@ ini_set('session.cookie_secure', '1');
 ini_set('session.cookie_httponly', '1');
 ini_set('session.cookie_samesite', 'Strict');
 ini_set('session.use_strict_mode', '1');
+
 // Start session before any output
 session_start();
 
@@ -140,47 +192,44 @@ $lista_cargo_institucion = array(
 $lista_sexo = array("Masculino", "Femenino");
 $lista_nacionalidad = array("afgano","alemán","árabe","argentino","australiano","belga","boliviano","brasileño","camboyano","canadiense","chileno","chino","colombiano","coreano","costarricense","cubano","danés","ecuatoriano","egipcio","salvadoreño","escocés","español","estadounidense","estonio","etiope","filipino","finlandés","francés","galés","griego","guatemalteco","haitiano","holandés","hondureño","indonés","inglés","iraquí","iraní","irlandés","israelí","italiano","japonés","jordano","laosiano","letón","letonés","malayo","marroquí","mexicano","nicaragüense","noruego","neozelandés","panameño","paraguayo","peruano","polaco","portugués","puertorriqueño","dominicano","rumano","ruso","sueco","suizo","tailandés","taiwanes","turco","ucraniano","uruguayo","venezolano","vietnamita","afgana","alemana","árabe","argentina","australiana","belga","boliviana","brasileña","camboyana","canadiense","chilena","china","colombiana","coreana","costarricense","cubana","danesa","ecuatoriana","egipcia","salvadoreña","escocesa","española","estadounidense","estonia","etiope","filipina","finlandesa","francesa","galesa","griega","guatemalteca","haitiana","holandesa","hondureña","indonesa","inglesa","iraquí","iraní","irlandesa","israelí","italiana","japonesa","jordana","laosiana","letona","letonesa","malaya","marroquí","mexicana","nicaragüense","noruega","neozelandesa","panameña","paraguaya","peruana","polaca","portuguesa","puertorriqueño","dominicana","rumana","rusa","sueca","suiza","tailandesa","taiwanesa","turca","ucraniana","uruguaya","venezolana","vietnamita");
 
-// Validate CAPTCHA with more detailed error handling
-if (!isset($_POST['captcha'])) {
-    sendJsonResponse(false, 'Error de verificación de seguridad: CAPTCHA no proporcionado', [], [
-        'captcha_received' => false,
-        'session_status' => session_status(),
+// Enhanced CAPTCHA validation
+if (!isset($_POST['captcha']) || !isset($_SESSION['captcha'])) {
+    $debug_info = [
+        'post_captcha' => $_POST['captcha'] ?? null,
+        'session_captcha' => $_SESSION['captcha'] ?? null,
         'session_id' => session_id(),
-        'session_data' => $_SESSION
-    ]);
-}
-
-if (!isset($_SESSION['captcha'])) {
-    // If CAPTCHA is not in session, check if we can recover it
-    if ($wp_loaded && function_exists('get_transient')) {
-        $stored_captcha = get_transient('user_captcha_' . $_SERVER['REMOTE_ADDR']);
-        if ($stored_captcha) {
-            $_SESSION['captcha'] = $stored_captcha;
-        }
-    }
+        'session_status' => session_status(),
+        'cookies' => $_COOKIE
+    ];
     
-    if (!isset($_SESSION['captcha'])) {
-        sendJsonResponse(false, 'Error de verificación de seguridad: Sesión CAPTCHA no encontrada', [], [
-            'captcha_received' => true,
-            'session_captcha' => false,
-            'session_status' => session_status(),
-            'session_id' => session_id(),
-            'post_captcha' => $_POST['captcha'],
-            'session_captcha_value' => null,
-            'cookies' => $_COOKIE
-        ]);
-    }
+    error_log("CAPTCHA validation failed: " . print_r($debug_info, true));
+    
+    header('HTTP/1.1 400 Bad Request');
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error de verificación CAPTCHA',
+        'debug' => $debug_info
+    ]);
+    exit;
 }
 
-// Case-insensitive CAPTCHA comparison
-if (strtoupper($_POST['captcha']) !== strtoupper($_SESSION['captcha'])) {
-    $invalid_captcha = [
-        'received_captcha' => $_POST['captcha'],
-        'session_captcha' => $_SESSION['captcha'],
+// Case-insensitive CAPTCHA comparison with trimming
+if (strtoupper(trim($_POST['captcha'])) !== strtoupper(trim($_SESSION['captcha']))) {
+    $debug_info = [
+        'received' => $_POST['captcha'],
+        'expected' => $_SESSION['captcha'],
         'session_id' => session_id()
     ];
-    error_log("CAPTCHA validation failed: " . print_r($invalid_captcha, true));
-    sendJsonResponse(false, 'Error de verificación de seguridad: CAPTCHA inválido', [], $invalid_captcha);
+    
+    error_log("CAPTCHA mismatch: " . print_r($debug_info, true));
+    
+    header('HTTP/1.1 400 Bad Request');
+    echo json_encode([
+        'success' => false,
+        'message' => 'Código CAPTCHA incorrecto',
+        'debug' => $debug_info
+    ]);
+    exit;
 }
 
 // Store CAPTCHA validation success in session
@@ -284,10 +333,33 @@ foreach ($required_fields as $field => $label) {
             break;
             
         case 'organizacion_facultad':
-            if (isset($_COOKIE["Facultad"])) {
-                if (strcmp($value, $_COOKIE["Facultad"]) !== 0) {
-                    $MSJ_ERROR .= "Facultad" . $separador;
-                    $errors[] = "Facultad no coincide con la seleccionada.";
+            if (empty($value)) {
+                $MSJ_ERROR .= "Facultad" . $separador;
+                $errors[] = "La facultad es requerida.";
+            } else {
+                // Debug logging
+                error_log("=== Faculty Validation ===");
+                error_log("Institution: " . ($_POST['organizacion'] ?? 'NOT_SET'));
+                error_log("Faculty: " . $value);
+
+                // Load institutions file
+                $institutions_file = __DIR__ . '/../data/INSTITUCIONES_2023_NEW.json';
+                $json_content = file_get_contents($institutions_file);
+                $institutions_data = json_decode($json_content, true);
+
+                // Direct key access - no normalization
+                if (!isset($institutions_data[$_POST['organizacion']])) {
+                    $MSJ_ERROR .= "Institución" . $separador;
+                    $errors[] = "Institución no encontrada en el sistema: '" . ($_POST['organizacion'] ?? '') . "'";
+                } else {
+                    // Direct key check - no normalization
+                    if (!isset($institutions_data[$_POST['organizacion']][$value])) {
+                        error_log("Available faculties: " . implode(", ", array_keys($institutions_data[$_POST['organizacion']])));
+                        error_log("Submitted faculty not found: " . $value);
+                        
+                        $MSJ_ERROR .= "Facultad" . $separador;
+                        $errors[] = "La facultad '$value' no corresponde a la institución seleccionada.";
+                    }
                 }
             }
             break;
@@ -379,9 +451,19 @@ $arreglo = [
 ];
 
 error_log('Processing research areas...');
-// Add research areas to the array
+// Modified foreach to use simple key mapping
 foreach ($research_areas as $post_key => $value) {
-    $key = strtolower(str_replace(' ', '_', preg_replace('/[^a-zA-Z0-9\s]/', '', $value)));
+    // Extract the numeric part from the key (0 to 5) and map to the correct field name
+    $id = substr($post_key, -1);
+    switch ($id) {
+        case '0': $key = 'ciencias_naturales'; break;
+        case '1': $key = 'ingenieria_tecnologia'; break;
+        case '2': $key = 'ciencias_medicas_salud'; break;
+        case '3': $key = 'ciencias_agricolas_veterinarias'; break;
+        case '4': $key = 'ciencias_sociales'; break;
+        case '5': $key = 'humanidades_artes'; break;
+        default: continue;
+    }
     $arreglo[$key] = isset($_POST[$post_key]) ? $_POST[$post_key] : '';
 }
 
@@ -396,72 +478,83 @@ if (file_exists($logger_path)) {
     error_log("RegistrationLogger.php not found at: " . $logger_path);
     $logger = null;
 }
-
 // Execute the Python script with the prepared data
-$json = json_encode($arreglo);
-error_log('Encoded data for Python script: ' . $json);
-$parametros = escapeshellarg(base64_encode($json));
-$success_redirect = '/solicitud_registro_usuario/register_success'; // Default success URL
+$scriptData = $arreglo; // Use the already prepared data array
+$json_data = json_encode($scriptData, JSON_UNESCAPED_UNICODE);
+$encoded_data = base64_encode($json_data);
+
+error_log('Preparing script execution...');
+error_log('Parameters: ' . $encoded_data);
+error_log('Environment: ' . print_r($_ENV, true));
 
 try {
     error_log('Executing Python script...');
-    exec('/var/www/PY/rutina_ingreso_2023.sh validar_usuarios ' . $parametros, $output, result_code: $return);
+    
+    // Validate script exists
+    $script_path = '/var/www/PY/rutina_ingreso_2023.sh';
+    if (!file_exists($script_path)) {
+        throw new Exception("Script file not found: $script_path");
+    }
+    
+    // Validate parameters
+    if (empty($encoded_data)) {
+        throw new Exception("Invalid parameters for script execution");
+    }
 
+    // Log script data preparation
+    $scriptLog = $logger->logScriptData($scriptData, $encoded_data);
+    
+    // Execute with full error capture
+    $cmd = sprintf('%s validar_usuarios %s 2>&1', $script_path, escapeshellarg($encoded_data));
+    $output = [];
+    $return = 0;
+    exec($cmd, $output, $return);
+    
+    error_log("Script execution complete. Return code: $return");
+    error_log("Script output: " . print_r($output, true));
+
+    // Log script execution response
+    $scriptLog = array_merge($scriptLog, $logger->logScriptResponse($output, $return));
+    
     if ($return === 0 && !empty($output[0])) {
-        error_log('Python script executed successfully');
-        // Log successful registration attempt
-        $logEntry = $logger->logAttempt($_POST, true, [
+        // Success handling
+        $response = [
             'success' => true,
             'message' => 'Registro exitoso',
-            'redirect' => $output[0]
-        ]);
-
-        // Store form data in session for success page
-        $_SESSION['form_data'] = $_POST;
-
-        // Prepare debug data if enabled - useful for troubleshooting
-        $debugData = [];
-        if (isset($_ENV['APP_DEBUG']) && $_ENV['APP_DEBUG'] === 'true') {
-            $debugData['formData'] = $_POST;
-        }
-
-        // Send success response with redirect URL from Python script
+            'redirect' => $output[0],
+            'script_output' => $output
+        ];
+        
+        $logEntry = $logger->logAttempt($_POST, true, $response, $scriptLog);
+        
         sendJsonResponse(true, 'Registro exitoso', [], [
             'redirect' => $output[0],
             'source' => 'python_script',
-            'log_id' => $logEntry['timestamp'],
-            'formData' => $debugData
+            'log_id' => $logEntry['timestamp']
         ]);
     } else {
-        // Script execution failed - log error details
-        error_log("Python script execution failed. Return code: $return");
-        error_log("Output: " . print_r($output, true));
-        
-        // Log failed registration attempt with error details
-        $logEntry = $logger->logAttempt($_POST, false, [
-            'success' => false,
-            'message' => 'Error en el procesamiento del registro',
-            'error_code' => $return,
-            'script_output' => $output
-        ]);
-
-        // Send error response with details for debugging
-        sendJsonResponse(false, 'Error en el procesamiento del registro', ['Error interno del servidor'], [
-            'error_code' => $return,
-            'script_output' => $output
-        ]);
+        throw new Exception(
+            "Script execution failed with code $return: " . implode("\n", $output)
+        );
     }
 } catch (Exception $e) {
-    // Unexpected error during script execution
-    error_log("Exception during Python script execution: " . $e->getMessage());
+    error_log("Script execution error: " . $e->getMessage());
     
-    // Log failed registration attempt with exception details
-    $logEntry = $logger->logAttempt($_POST, false, [
+    $response = [
         'success' => false,
         'message' => 'Error en el procesamiento del registro',
-        'error' => $e->getMessage()
-    ]);
+        'error' => $e->getMessage(),
+        'type' => 'script_execution_error'
+    ];
 
-    // Send generic error response to avoid exposing internal details
-    sendJsonResponse(false, 'Error en el procesamiento del registro', ['Error interno del servidor']);
+    if ($logger) {
+        $logger->logAttempt($_POST, false, $response, $scriptLog ?? []);
+    }
+    
+    sendJsonResponse(false, 'Error en el procesamiento del registro', [
+        'Error interno del servidor'
+    ], [
+        'error_type' => 'script_execution',
+        'error_message' => $e->getMessage()
+    ]);
 }

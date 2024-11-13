@@ -557,42 +557,42 @@
           <label class="block text-sm font-medium leading-6 text-gray-900">Área principal de investigación</label>
           <div class="mt-2 space-y-2">
             <div class="flex items-center">
-              <input id="ciencias-naturales" name="research-area" type="checkbox" value="ciencias-naturales"
+              <input id="ciencias_naturales" name="research-area" type="checkbox" value="ciencias_naturales"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
-              <label for="ciencias-naturales" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ciencias
+              <label for="ciencias_naturales" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ciencias
                 Naturales</label>
             </div>
             <div class="flex items-center">
-              <input id="ingenieria-tecnologia" name="research-area" type="checkbox" value="ingenieria-tecnologia"
+              <input id="ingenieria_tecnologia" name="research-area" type="checkbox" value="ingenieria_tecnologia"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
-              <label for="ingenieria-tecnologia"
+              <label for="ingenieria_tecnologia"
                 class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ingeniería
                 y Tecnología</label>
             </div>
             <div class="flex items-center">
-              <input id="ciencias-medicas-salud" name="research-area" type="checkbox" value="ciencias-medicas-salud"
+              <input id="ciencias_medicas_salud" name="research-area" type="checkbox" value="ciencias_medicas_salud"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
-              <label for="ciencias-medicas-salud"
+              <label for="ciencias_medicas_salud"
                 class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ciencias
                 Médicas y de la Salud</label>
             </div>
             <div class="flex items-center">
-              <input id="ciencias-agricolas-veterinarias" name="research-area" type="checkbox"
-                value="ciencias-agricolas-veterinarias"
+              <input id="ciencias_agricolas_veterinarias" name="research-area" type="checkbox"
+                value="ciencias_agricolas_veterinarias"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
-              <label for="ciencias-agricolas-veterinarias"
+              <label for="ciencias_agricolas_veterinarias"
                 class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ciencias Agrícolas y Veterinarias</label>
             </div>
             <div class="flex items-center">
-              <input id="ciencias-sociales" name="research-area" type="checkbox" value="ciencias-sociales"
+              <input id="ciencias_sociales" name="research-area" type="checkbox" value="ciencias_sociales"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
-              <label for="ciencias-sociales" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ciencias
+              <label for="ciencias_sociales" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ciencias
                 Sociales</label>
             </div>
             <div class="flex items-center">
-              <input id="humanidades-artes" name="research-area" type="checkbox" value="humanidades-artes"
+              <input id="humanidades_artes" name="research-area" type="checkbox" value="humanidades_artes"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
-              <label for="humanidades-artes" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Humanidades
+              <label for="humanidades_artes" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Humanidades
                 y Artes</label>
             </div>
             <!-- <div class="flex items-center">
