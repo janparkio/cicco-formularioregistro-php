@@ -392,9 +392,9 @@ foreach ($required_fields as $field => $label) {
 // Validate research areas
 $research_areas = [
     'et_pb_contact_area_investigacion_0_23_0' => 'Ciencias Naturales',
-    'et_pb_contact_area_investigacion_0_23_1' => 'Ingenieria y Tecnologia',
-    'et_pb_contact_area_investigacion_0_23_2' => 'Ciencias Medicas y de la Salud',
-    'et_pb_contact_area_investigacion_0_23_3' => 'Ciencias Agricolas y Veterinarias',
+    'et_pb_contact_area_investigacion_0_23_1' => 'Ingeniería y Tecnología',
+    'et_pb_contact_area_investigacion_0_23_2' => 'Ciencias Médicas y de la Salud',
+    'et_pb_contact_area_investigacion_0_23_3' => 'Ciencias Agrícolas y Veterinarias',
     'et_pb_contact_area_investigacion_0_23_4' => 'Ciencias Sociales',
     'et_pb_contact_area_investigacion_0_23_5' => 'Humanidades y Artes'
 ];
