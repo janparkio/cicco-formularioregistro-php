@@ -504,6 +504,34 @@ try {
     // Log script data preparation
     $scriptLog = $logger->logScriptData($scriptData, $encoded_data);
     
+    // Transform role value right before script execution
+    switch($scriptData['cargo_institucion']) {
+        case 'investigador-pronii':
+            $scriptData['cargo_institucion'] = 'investigador pronii';
+            break;
+        case 'docente':
+            $scriptData['cargo_institucion'] = 'docente universitario';
+            break;
+        case 'estudiante':
+            $scriptData['cargo_institucion'] = 'estudiante universitario';
+            break;
+        case 'administrativo':
+            $scriptData['cargo_institucion'] = 'personal administrativo';
+            break;
+        case 'tecnico':
+            $scriptData['cargo_institucion'] = 'personal tecnico';
+            break;
+        case 'consultor':
+            $scriptData['cargo_institucion'] = 'consultor_asesor';
+            break;
+    }
+    
+    error_log('Final role value for script: ' . $scriptData['cargo_institucion']);
+    
+    // Re-encode the data with transformed role
+    $json_data = json_encode($scriptData, JSON_UNESCAPED_UNICODE);
+    $encoded_data = base64_encode($json_data);
+    
     // Execute with full error capture
     $cmd = sprintf('%s validar_usuarios %s 2>&1', $script_path, escapeshellarg($encoded_data));
     $output = [];
