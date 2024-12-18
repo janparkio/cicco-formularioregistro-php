@@ -319,13 +319,6 @@ foreach ($required_fields as $field => $label) {
             break;
             
         case 'organizacion':
-            // Commented out cookie validation since it's not needed
-            // if (isset($_COOKIE["Organizacion"])) {
-            //     if (strcmp($value, $_COOKIE["Organizacion"]) !== 0) {
-            //         $MSJ_ERROR .= "Institución" . $separador;
-            //         $errors[] = "Institución no coincide con la seleccionada.";
-            //     }
-            // }
             if (empty($value)) {
                 $MSJ_ERROR .= "Institución" . $separador;
                 $errors[] = "Institución es requerida.";
@@ -336,34 +329,9 @@ foreach ($required_fields as $field => $label) {
             if (empty($value)) {
                 $MSJ_ERROR .= "Facultad" . $separador;
                 $errors[] = "La facultad es requerida.";
-            } else {
-                // Debug logging
-                error_log("=== Faculty Validation ===");
-                error_log("Institution: " . ($_POST['organizacion'] ?? 'NOT_SET'));
-                error_log("Faculty: " . $value);
-
-                // Load institutions file
-                $institutions_file = __DIR__ . '/../data/INSTITUCIONES_2023_NEW.json';
-                $json_content = file_get_contents($institutions_file);
-                $institutions_data = json_decode($json_content, true);
-
-                // Direct key access - no normalization
-                if (!isset($institutions_data[$_POST['organizacion']])) {
-                    $MSJ_ERROR .= "Institución" . $separador;
-                    $errors[] = "Institución no encontrada en el sistema: '" . ($_POST['organizacion'] ?? '') . "'";
-                } else {
-                    // Direct key check - no normalization
-                    if (!isset($institutions_data[$_POST['organizacion']][$value])) {
-                        error_log("Available faculties: " . implode(", ", array_keys($institutions_data[$_POST['organizacion']])));
-                        error_log("Submitted faculty not found: " . $value);
-                        
-                        $MSJ_ERROR .= "Facultad" . $separador;
-                        $errors[] = "La facultad '$value' no corresponde a la institución seleccionada.";
-                    }
-                }
             }
             break;
-            
+
         case 'et_pb_contact_rol_0':
             // Convert role value to lowercase and trim whitespace for consistent comparison
             $value = strtolower(trim($value));
@@ -391,22 +359,22 @@ foreach ($required_fields as $field => $label) {
 
 // Validate research areas
 $research_areas = [
-    'et_pb_contact_area_investigacion_0_23_0' => 'Ciencias Naturales',
-    'et_pb_contact_area_investigacion_0_23_1' => 'Ingeniería y Tecnología',
-    'et_pb_contact_area_investigacion_0_23_2' => 'Ciencias Médicas y de la Salud',
-    'et_pb_contact_area_investigacion_0_23_3' => 'Ciencias Agrícolas y Veterinarias',
-    'et_pb_contact_area_investigacion_0_23_4' => 'Ciencias Sociales',
-    'et_pb_contact_area_investigacion_0_23_5' => 'Humanidades y Artes'
+    'et_pb_contact_area_investigacion_0_23_0' => ['Ciencias Naturales', 'Ciencias Naturales'],
+    'et_pb_contact_area_investigacion_0_23_1' => ['Ingeniería y Tecnología', 'Ingenieria y Tecnologia'],
+    'et_pb_contact_area_investigacion_0_23_2' => ['Ciencias Médicas y de la Salud', 'Ciencias Medicas y de la Salud'],
+    'et_pb_contact_area_investigacion_0_23_3' => ['Ciencias Agrícolas y Veterinarias', 'Ciencias Agricolas y Veterinarias'],
+    'et_pb_contact_area_investigacion_0_23_4' => ['Ciencias Sociales', 'Ciencias Sociales'],
+    'et_pb_contact_area_investigacion_0_23_5' => ['Humanidades y Artes', 'Humanidades y Artes']
 ];
-// Add debug logging for research areas validation
-error_log('Validating research areas...');
-error_log('Research areas in POST: ' . print_r(array_intersect_key($_POST, $research_areas), true));
 
 $area_selected = false;
-foreach ($research_areas as $post_key => $expected_value) {
-    error_log("Checking research area: $post_key => $expected_value");
-    if (isset($_POST[$post_key]) && $_POST[$post_key] === $expected_value) {
-        error_log("Found selected area: $expected_value");
+foreach ($research_areas as $post_key => $values) {
+    error_log("Checking research area: $post_key");
+    if (isset($_POST[$post_key]) && (
+        $_POST[$post_key] === $values[0] || // Check accented version
+        $_POST[$post_key] === $values[1]    // Check non-accented version
+    )) {
+        error_log("Found selected area: " . $_POST[$post_key]);
         $area_selected = true;
         break;
     }
@@ -414,6 +382,7 @@ foreach ($research_areas as $post_key => $expected_value) {
 
 if (!$area_selected) {
     error_log('No research areas selected');
+    error_log('POST data: ' . print_r($_POST, true));
     $MSJ_ERROR .= "Dominio científico de su interés" . $separador;
     $errors[] = "Debe seleccionar al menos un área de investigación.";
 }
@@ -524,6 +493,63 @@ try {
         case 'consultor':
             $scriptData['cargo_institucion'] = 'consultor_asesor';
             break;
+    }
+    // Sanitize organization name right before script execution
+    error_log("Starting organization name sanitization...");
+    if (isset($scriptData['organizacion'])) {
+        $originalName = $scriptData['organizacion'];
+        error_log("Original organization name: " . $originalName);
+        
+        // Clean the institution name
+        $cleanName = stripslashes($originalName);              // Remove backslashes
+        error_log("After stripslashes: " . $cleanName);
+        
+        $cleanName = str_replace(['"', "'", "\\"], '', $cleanName); // Remove quotes and backslashes
+        error_log("After removing quotes and backslashes: " . $cleanName);
+        
+        $cleanName = preg_replace('/\s+/', ' ', $cleanName);  // Normalize spaces
+        error_log("After normalizing spaces: " . $cleanName);
+        
+        // Allow letters (including Spanish), numbers, and basic punctuation
+        $cleanName = preg_replace('/[^a-zA-ZáéíóúüñÁÉÍÓÚÜÑ0-9\s\.,_-]/', '', $cleanName);
+        error_log("After character filtering: " . $cleanName);
+        
+        $cleanName = trim($cleanName);                        // Remove leading/trailing spaces
+        error_log("After final trim: " . $cleanName);
+        
+        $scriptData['organizacion'] = $cleanName;
+        error_log("Institution name sanitized: '$originalName' -> '$cleanName'");
+    } else {
+        error_log("Warning: organizacion field not found in scriptData");
+    }
+
+    // Sanitize unit/career name right before script execution  
+    error_log("Starting unit/career name sanitization...");
+    if (isset($scriptData['organizacion_facultad_carrera'])) {
+        $originalName = $scriptData['organizacion_facultad_carrera'];
+        error_log("Original unit/career name: " . $originalName);
+        
+        // Clean the unit/career name
+        $cleanName = stripslashes($originalName);              // Remove backslashes
+        error_log("After stripslashes: " . $cleanName);
+        
+        $cleanName = str_replace(['"', "'"], '', $cleanName); // Remove quotes
+        error_log("After removing quotes: " . $cleanName);
+        
+        $cleanName = preg_replace('/\s+/', ' ', $cleanName);  // Normalize spaces
+        error_log("After normalizing spaces: " . $cleanName);
+        
+        // Allow letters (including Spanish), numbers, and basic punctuation
+        $cleanName = preg_replace('/[^a-zA-ZáéíóúüñÁÉÍÓÚÜÑ0-9\s\.,_-]/', '', $cleanName);
+        error_log("After character filtering: " . $cleanName);
+        
+        $cleanName = trim($cleanName);                        // Remove leading/trailing spaces
+        error_log("After final trim: " . $cleanName);
+        
+        $scriptData['organizacion_facultad_carrera'] = $cleanName;
+        error_log("Unit/career name sanitized: '$originalName' -> '$cleanName'");
+    } else {
+        error_log("Warning: organizacion_facultad_carrera field not found in scriptData");
     }
     
     error_log('Final role value for script: ' . $scriptData['cargo_institucion']);

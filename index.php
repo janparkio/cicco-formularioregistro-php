@@ -2,6 +2,13 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "oggi39mfcl");
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulario de Registro de Usuario - CICCO Conacyt</title>
     <link rel="icon" type="image/png" href="favicon-48x48.png" sizes="48x48" />
@@ -43,7 +50,7 @@
                                     Formulario de regístro de usuario</h2>
                                 <p class="text-xs sm:text-sm font-light leading-tight text-gray-900 mt-1 truncate">
                                     Última
-                                    actualización: <span class="">2024.10.16</span>
+                                    actualización: <span class="">2024.12.18</span>
                                 </p>
                             </div>
                         </div>
@@ -55,6 +62,14 @@
             <?php include "components/form-front.php"; ?>
         </section>
     </main>
+    <div class="max-w-3xl mx-auto px-4 mb-8 text-sm text-gray-600">
+        <p class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            Este formulario se encuentra en fase de prueba durante las próximas tres semanas. 
+            Si tienes dudas o consultas, por favor escríbenos a 
+            <a href="mailto:contacto@rosflo.com" class="text-primary-600 hover:underline">contacto@rosflo.com</a>. 
+            Completa nuestro <a href="https://cicco.conacyt.gov.py/contactos/" class="text-primary-600 hover:underline">formulario de atención al usuario</a>.
+        </p>
+    </div>
     <footer class="bg-primary-700 py-8">
   <div class="container mx-auto px-4">
     <div class="flex justify-center mb-8">
