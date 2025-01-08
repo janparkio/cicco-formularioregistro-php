@@ -417,7 +417,7 @@
         </div>
 
         <!-- Rol dentro de la institución -->
-        <div class="col-span-6 sm:col-span-3 role-field hidden">
+        <div class="col-span-6 sm:col-span-3">
           <label for="institutional-role" class="block text-sm font-medium leading-6 text-gray-900">Rol dentro de la
             institución</label>
           <div class="mt-2">
@@ -672,502 +672,71 @@
 <!-- Form Main Logic -->
 <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.js"></script>
 <script src="lib/form-submission.js"></script>
+<script src="components/search-institutions.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Global variables
-    let institutions = [];
-    let institutionData, geographicData, nationalityData;
+document.addEventListener('DOMContentLoaded', function () {
+  // Global variables
+  let institutionData, geographicData, nationalityData;
 
-    // Load JSON data
-    const loadJSON = async (url) => {
-      try {
-        const response = await fetch(url);
-        return response.json();
-      } catch (error) {
-        console.error(`Error loading JSON from ${url}:`, error);
-        return null;
-      }
-    };
+  // Helper function to populate select elements
+  const populateSelect = (elementId, options) => {
+    const selectElement = document.getElementById(elementId);
+    if (!selectElement) return;
 
-    // Populate select element
-    const populateSelect = (elementId, options, defaultText = "Seleccione una opción") => {
-      const select = document.getElementById(elementId);
-      if (!select) {
-        console.error(`Element with id '${elementId}' not found`);
-        return;
-      }
-      select.innerHTML = `<option value="">${defaultText}</option>`;
-      options.forEach(option => {
-        const optionElement = document.createElement('option');
-        optionElement.value = option.value || option;
-        optionElement.textContent = option.text || option;
-        select.appendChild(optionElement);
-      });
-    };
+    selectElement.innerHTML = '<option value="">Seleccione una opción</option>';
+    options.forEach(option => {
+      const optionElement = document.createElement('option');
+      optionElement.value = option.value || option;
+      optionElement.textContent = option.text || option;
+      selectElement.appendChild(optionElement);
+    });
+  };
 
-    // Handle geographic selection
-    const handleGeographicSelection = () => {
-      if (!geographicData || !geographicData.pais) {
-        console.error('Invalid geographic data');
-        return;
-      }
-      const departmentSelect = document.getElementById('department');
-      const citySelect = document.getElementById('city');
-      if (!departmentSelect || !citySelect) {
-        console.error('Department or city select elements not found');
-        return;
+  // Load JSON data
+  const loadJSON = async (url) => {
+    try {
+      const response = await fetch(url);
+      return response.json();
+    } catch (error) {
+      console.error(`Error loading JSON from ${url}:`, error);
+      return null;
+    }
+  };
+
+  // Initialize form
+  const initForm = async () => {
+    try {
+      // Load all data first
+      [institutionData, geographicData, nationalityData] = await Promise.all([
+        loadJSON('data/INSTITUCIONES_2023_NEW.json'),
+        loadJSON('data/REGION_CIUDAD.json'),
+        loadJSON('data/nacionalidades.json')
+      ]);
+
+      if (!institutionData || !geographicData || !nationalityData) {
+        throw new Error('Failed to load one or more required data files');
       }
 
-      populateSelect('department', geographicData.pais.map(region => ({
-        value: region.nombre_region,
-        text: region.nombre_region
-      })).sort((a, b) => a.text.localeCompare(b.text)));
+      // Initialize institution search
+      window.institutionSearch = new InstitutionSearch();
+      window.institutionSearch.init(institutionData);
 
-      departmentSelect.addEventListener('change', () => {
-        const selectedDepartment = geographicData.pais.find(region => region.nombre_region === departmentSelect.value);
-        if (selectedDepartment) {
-          populateSelect('city', selectedDepartment.ciudades.map(city => ({
-            value: city.ciudad,
-            text: city.ciudad
-          })).sort((a, b) => a.text.localeCompare(b.text)), "Seleccione una ciudad");
-          citySelect.disabled = false;
-        } else {
-          citySelect.innerHTML = '<option value="">Seleccione una ciudad</option>';
-          citySelect.disabled = true;
-        }
-      });
-    };
-
-    // Handle institution selection
-    const handleInstitutionSelection = () => {
-      if (!institutionData) {
-        console.error('Invalid institution data');
-        return;
+      // Populate nationalities
+      if (nationalityData.paises) {
+        populateSelect('nationality', nationalityData.paises.map(pais => ({
+          value: pais.datos[0].masculino,
+          text: pais.nombre
+        })));
       }
 
-      const elements = {
-        searchInput: document.getElementById('institution-name-search'),
-        dropdown: document.getElementById('institution-name-dropdown'),
-        hiddenInput: document.getElementById('institution-name'),
-        allInstitutionsModal: document.getElementById('all-institutions-modal'),
-        allInstitutionsBody: document.getElementById('all-institutions-body'),
-        showAllButton: document.getElementById('show-all-institutions'),
-        requestNewButton: document.getElementById('request-new-institution'),
-        closeAllInstitutionsModal: document.getElementById('close-all-institutions-modal')
-      };
+    } catch (error) {
+      console.error('Error initializing form:', error);
+    }
+  };
 
-      const missingElements = Object.entries(elements)
-        .filter(([, element]) => !element)
-        .map(([name]) => name);
-
-      if (missingElements.length > 0) {
-        console.error('The following required elements for institution selection are missing:', missingElements.join(', '));
-        return;
-      }
-
-      institutions = Object.keys(institutionData).map(inst => ({
-        name: inst,
-        value: inst
-      }));
-
-      const fuse = new Fuse(institutions, {
-        keys: ['name'],
-        threshold: 0.3,
-        ignoreLocation: true,
-        ignoreFieldNorm: true,
-        useExtendedSearch: true
-      });
-
-      function populateDropdown(items) {
-        elements.dropdown.innerHTML = '';
-        items.forEach((item) => {
-          const div = document.createElement('div');
-          div.textContent = item.name;
-          div.classList.add('cursor-pointer', 'select-none', 'relative', 'py-2', 'pl-3', 'pr-9', 'hover:bg-primary-600', 'hover:text-white');
-          div.addEventListener('click', () => selectInstitution(item));
-          elements.dropdown.appendChild(div);
-        });
-        if (items.length > 0) {
-          elements.dropdown.classList.remove('hidden');
-        } else {
-          elements.dropdown.classList.add('hidden');
-        }
-      }
-
-      function selectInstitution(institution) {
-        elements.searchInput.value = institution.name;
-        elements.hiddenInput.value = institution.value;
-        elements.searchInput.classList.add('ring-2', 'ring-green-500');
-        elements.dropdown.classList.add('hidden');
-        document.getElementById('clear-institution').classList.remove('hidden');
-        
-        // Solo mostrar el campo de facultad
-        document.querySelector('.faculty-field').classList.remove('hidden');
-        // Ocultar el campo de carrera
-        document.querySelector('.career-field').classList.add('hidden');
-        
-        updateFacultySelect(institution.value);
-      }
-
-      function updateFacultySelect(institutionName) {
-        const facultySelect = document.getElementById('campus-faculty');
-        const careerSelect = document.getElementById('specific-unit-career');
-
-        if (!facultySelect || !careerSelect) {
-          console.error('Faculty or career select element not found');
-          return;
-        }
-
-        const selectedInstitution = institutionData[institutionName];
-
-        if (selectedInstitution) {
-          const faculties = Object.keys(selectedInstitution);
-          populateSelect('campus-faculty', faculties.map(fac => ({
-            value: fac,
-            text: fac
-          })).sort((a, b) => a.text.localeCompare(b.text)), "Seleccione una facultad");
-
-          facultySelect.disabled = false;
-          careerSelect.disabled = true;
-          careerSelect.value = '';
-
-          // Remover listener anterior si existe
-          facultySelect.removeEventListener('change', facultyChangeHandler);
-          // Agregar nuevo listener
-          facultySelect.addEventListener('change', facultyChangeHandler);
-        }
-      }
-
-      function facultyChangeHandler() {
-        const careerField = document.querySelector('.career-field');
-        const careerSelect = document.getElementById('specific-unit-career');
-        
-        if (this.value) {
-          careerField.classList.remove('hidden');
-          updateCareerSelect(elements.hiddenInput.value, this.value);
-        } else {
-          careerField.classList.add('hidden');
-          careerSelect.value = '';
-          careerSelect.disabled = true;
-        }
-      }
-
-      function updateCareerSelect(institutionName, facultyName) {
-        const careerInput = document.getElementById('specific-unit-career');
-        const careerDatalist = document.getElementById('career-options');
-
-        if (!careerInput || !careerDatalist) {
-          console.error('Career input or datalist element not found');
-          return;
-        }
-
-        const selectedFaculty = institutionData[institutionName][facultyName];
-
-        if (selectedFaculty) {
-          // Limpiar el datalist
-          careerDatalist.innerHTML = '';
-          
-          // Poblar el datalist con las opciones ordenadas alfabéticamente
-          selectedFaculty
-            .sort((a, b) => a.localeCompare(b))
-            .forEach(career => {
-              const option = document.createElement('option');
-              option.value = career;
-              careerDatalist.appendChild(option);
-            });
-
-          careerInput.disabled = false;
-        } else {
-          careerDatalist.innerHTML = '';
-          careerInput.disabled = true;
-          careerInput.value = '';
-        }
-      }
-
-      elements.searchInput.addEventListener('input', function () {
-        const results = fuse.search(this.value);
-        populateDropdown(results.map(result => result.item));
-      });
-
-      function showAllInstitutions() {
-        const tbody = elements.allInstitutionsBody;
-        tbody.innerHTML = '';
-        institutions.sort((a, b) => a.name.localeCompare(b.name)).forEach(institution => {
-          const row = document.createElement('tr');
-          row.classList.add('hover:bg-gray-100', 'transition-colors', 'cursor-pointer');
-          const cell = document.createElement('td');
-          cell.textContent = institution.name;
-          cell.classList.add('px-4', 'py-2');
-          row.appendChild(cell);
-          row.addEventListener('click', () => {
-            const selectedRow = tbody.querySelector('tr.selected');
-            if (selectedRow) {
-              selectedRow.classList.remove('selected', 'bg-blue-100');
-            }
-            row.classList.add('selected', 'bg-blue-100');
-          });
-          tbody.appendChild(row);
-        });
-      }
-
-      elements.showAllButton.addEventListener('click', function () {
-        showAllInstitutions(); // Populate the modal content
-        elements.allInstitutionsModal.classList.remove('hidden'); // Show the modal
-        
-        // Auto-focus en el campo de búsqueda
-        const searchInput = document.getElementById('modal-search-input');
-        if (searchInput) {
-          setTimeout(() => {
-            searchInput.focus();
-          }, 100); // Pequeño delay para asegurar que el modal esté visible
-        }
-      });
-
-      elements.closeAllInstitutionsModal.addEventListener('click', function () {
-        elements.allInstitutionsModal.classList.add('hidden');
-      });
-
-      // Event listener to close the modal when clicking outside the modal content
-      elements.allInstitutionsModal.addEventListener('click', function (event) {
-        if (event.target === elements.allInstitutionsModal) {
-          elements.allInstitutionsModal.classList.add('hidden');
-        }
-      });
-
-      const selectInstitutionButton = document.getElementById('select-institution');
-      if (selectInstitutionButton) {
-        selectInstitutionButton.addEventListener('click', () => {
-          const selectedRow = elements.allInstitutionsBody.querySelector('tr.selected');
-          if (selectedRow) {
-            const institutionName = selectedRow.querySelector('td').textContent;
-            selectInstitution({ name: institutionName, value: institutionName });
-            elements.allInstitutionsModal.classList.add('hidden');
-          } else {
-            alert('Por favor, seleccione una institución');
-          }
-        });
-      }
-
-      document.addEventListener('click', function (e) {
-        if (!elements.searchInput.contains(e.target) && !elements.dropdown.contains(e.target)) {
-          elements.dropdown.classList.add('hidden');
-        }
-      });
-
-      // Add keyboard navigation
-      elements.searchInput.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-          e.preventDefault();
-          const items = elements.dropdown.querySelectorAll('div');
-          const currentIndex = Array.from(items).findIndex(item => item === document.activeElement);
-          let nextIndex;
-          if (e.key === 'ArrowDown') {
-            nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0;
-          } else {
-            nextIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
-          }
-          items[nextIndex].focus();
-        } else if (e.key === 'Enter' && document.activeElement !== elements.searchInput) {
-          e.preventDefault();
-          document.activeElement.click();
-        }
-      });
-
-      // Handle new institution request
-      elements.requestNewButton.addEventListener('click', function () {
-        // TODO: Replace later with actual website.
-        window.open('https://cicco.conacyt.gov.py/contactos/', '_blank');
-      });
-
-      // Add clear institution functionality
-      const clearInstitutionButton = document.getElementById('clear-institution');
-      if (clearInstitutionButton) {
-        clearInstitutionButton.addEventListener('click', function() {
-          elements.searchInput.value = '';
-          elements.hiddenInput.value = '';
-          elements.searchInput.classList.remove('ring-2', 'ring-green-500');
-          clearInstitutionButton.classList.add('hidden');
-          
-          // Ocultar y limpiar ambos campos
-          document.querySelector('.faculty-field').classList.add('hidden');
-          document.querySelector('.career-field').classList.add('hidden');
-          
-          const facultySelect = document.getElementById('campus-faculty');
-          const careerSelect = document.getElementById('specific-unit-career');
-          
-          if (facultySelect) {
-            facultySelect.value = '';
-            facultySelect.disabled = true;
-          }
-          if (careerSelect) {
-            careerSelect.value = '';
-            careerSelect.disabled = true;
-          }
-        });
-      }
-
-      // Add modal search functionality
-      const modalSearchInput = document.getElementById('modal-search-input');
-      if (modalSearchInput) {
-        modalSearchInput.addEventListener('input', function() {
-          const tbody = elements.allInstitutionsBody;
-          tbody.innerHTML = '';
-          
-          // Si el input está vacío, mostrar todas las instituciones
-          if (!this.value.trim()) {
-            institutions
-              .sort((a, b) => a.name.localeCompare(b.name))
-              .forEach(institution => {
-                addInstitutionRow(tbody, institution);
-              });
-          } else {
-            // Si hay texto, buscar y mostrar resultados filtrados
-            const searchResults = fuse.search(this.value);
-            const sortedResults = searchResults
-              .map(result => result.item)
-              .sort((a, b) => a.name.localeCompare(b.name));
-            
-            sortedResults.forEach(institution => {
-              addInstitutionRow(tbody, institution);
-            });
-          }
-          
-          // Siempre agregar la fila de solicitud al final
-          addRequestInstitutionRow(tbody);
-        });
-      }
-
-      // Función helper para agregar una fila de institución
-      function addInstitutionRow(tbody, institution) {
-        const row = document.createElement('tr');
-        row.classList.add('hover:bg-gray-100', 'transition-colors', 'cursor-pointer');
-        const cell = document.createElement('td');
-        cell.textContent = institution.name;
-        cell.classList.add('px-4', 'py-2');
-        row.appendChild(cell);
-        row.addEventListener('click', () => {
-          const selectedRow = tbody.querySelector('tr.selected');
-          if (selectedRow) {
-            selectedRow.classList.remove('selected', 'bg-blue-100');
-          }
-          row.classList.add('selected', 'bg-blue-100');
-        });
-        tbody.appendChild(row);
-      }
-
-      // Función helper para agregar la fila de solicitud
-      function addRequestInstitutionRow(tbody) {
-        const requestRow = document.createElement('tr');
-        requestRow.innerHTML = `
-          <td class="px-4 py-4 text-center border-t">
-            <a href="https://cicco.conacyt.gov.py/contactos/" 
-               class="text-primary-600 hover:text-primary-900 text-sm font-medium inline-flex items-center">
-              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-              </svg>
-              No encuentro mi institución, quiero solicitar su adición
-            </a>
-          </td>
-        `;
-        
-        tbody.appendChild(requestRow);
-      }
-
-      // Agregar evento click al campo de búsqueda de institución
-      elements.searchInput.addEventListener('click', function() {
-        showAllInstitutions(); // Populate the modal content
-        elements.allInstitutionsModal.classList.remove('hidden'); // Show the modal
-        
-        // Auto-focus en el campo de búsqueda
-        const searchInput = document.getElementById('modal-search-input');
-        if (searchInput) {
-          setTimeout(() => {
-            searchInput.focus();
-          }, 100);
-        }
-      });
-    };
-
-    // Initialize form
-    const initForm = async () => {
-      try {
-        [institutionData, geographicData, nationalityData] = await Promise.all([
-          loadJSON('data/INSTITUCIONES_2023_NEW.json'),
-          loadJSON('data/REGION_CIUDAD.json'),
-          loadJSON('data/nacionalidades.json')
-        ]);
-
-        if (!institutionData || !geographicData || !nationalityData) {
-          throw new Error('Failed to load one or more required data files');
-        }
-
-        handleGeographicSelection();
-        handleInstitutionSelection();
-
-        // Populate nationalities
-        if (nationalityData.paises) {
-          populateSelect('nationality', nationalityData.paises.map(pais => ({
-            value: pais.datos[0].masculino,
-            text: pais.nombre
-          })));
-        } else {
-          console.error('Invalid nationality data structure');
-        }
-
-      } catch (error) {
-        console.error('Error initializing form:', error);
-      }
-    };
-
-    // Validate the entire form
-    const validateForm = () => {
-      let isValid = true;
-
-      // Add validation for all required fields
-      const requiredFields = [
-        'first-name', 'last-name', 'nationality', 'id-number', 'birth-year',
-        'birth-month', 'birth-day', 'mobile-phone', 'department', 'city',
-        'institutional-email', 'institution-name-search', 'campus-faculty',
-        'specific-unit-career', 'institutional-role'
-      ];
-
-      requiredFields.forEach(fieldId => {
-        isValid = validateField(fieldId, `Por favor, complete este campo`) && isValid;
-      });
-
-      // Validate research areas
-      const researchAreas = document.querySelectorAll('input[name="research-area"]:checked');
-      const researchAreaError = document.getElementById('research-area-error');
-      if (researchAreas.length === 0 && researchAreaError) {
-        researchAreaError.textContent = 'Por favor, seleccione al menos un área de investigación';
-        researchAreaError.classList.remove('hidden');
-        isValid = false;
-      } else if (researchAreaError) {
-        researchAreaError.classList.add('hidden');
-      }
-
-      return isValid;
-    };
-
-    // Validate individual field
-    const validateField = (fieldId, errorMessage) => {
-      const field = document.getElementById(fieldId);
-      const errorElement = document.getElementById(`${fieldId}-error`);
-      if (field && !field.checkValidity()) {
-        if (errorElement) {
-          errorElement.textContent = errorMessage;
-          errorElement.classList.remove('hidden');
-        }
-        return false;
-      } else if (errorElement) {
-        errorElement.classList.add('hidden');
-      }
-      return true;
-    };
-
-    // Initialize the form
-    initForm();
-  });
+  // Initialize the form
+  initForm();
+});
 </script>
 
 <style>

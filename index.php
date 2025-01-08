@@ -53,7 +53,7 @@
                                     Formulario de registro de usuario</h2>
                                 <p class="text-xs sm:text-sm font-light leading-tight text-gray-900 mt-1 truncate">
                                     Última
-                                    actualización: <span class="">2024.12.18</span>
+                                    actualización: <span class="">2025.01.06</span>
                                 </p>
                             </div>
                         </div>
