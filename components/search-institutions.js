@@ -26,8 +26,6 @@ class InstitutionSearch {
       })
       .catch(error => console.error('Error loading geographic data:', error));
 
-    this.initNationalitySelector();
-
     this.debug = options.debug || false; // Add debug flag
   }
 

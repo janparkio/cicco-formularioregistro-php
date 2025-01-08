@@ -73,7 +73,6 @@
           });
         </script>
 
-
         <!-- Sexo -->
         <div class="sm:col-span-3">
           <label for="gender" class="block text-sm font-medium leading-6 text-gray-900">Sexo</label>
@@ -706,7 +705,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // Initialize form
   const initForm = async () => {
     try {
-      // Load all data first
       [institutionData, geographicData, nationalityData] = await Promise.all([
         loadJSON('data/INSTITUCIONES_2023_NEW.json'),
         loadJSON('data/REGION_CIUDAD.json'),
@@ -718,16 +716,65 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       // Initialize institution search
-      window.institutionSearch = new InstitutionSearch();
-      window.institutionSearch.init(institutionData);
+      const institutionSearch = new InstitutionSearch();
+      institutionSearch.init(institutionData);
 
-      // Populate nationalities
-      if (nationalityData.paises) {
-        populateSelect('nationality', nationalityData.paises.map(pais => ({
-          value: pais.datos[0].masculino,
-          text: pais.nombre
-        })));
+      // Initialize geographic selectors
+      const departmentSelect = document.getElementById('department');
+      const citySelect = document.getElementById('city');
+      
+      if (departmentSelect && citySelect && geographicData.pais) {
+        // Populate departments
+        departmentSelect.innerHTML = '<option value="">Seleccione un departamento</option>';
+        geographicData.pais
+          .sort((a, b) => a.nombre_region.localeCompare(b.nombre_region))
+          .forEach(region => {
+            const option = document.createElement('option');
+            option.value = region.nombre_region;
+            option.textContent = region.nombre_region;
+            departmentSelect.appendChild(option);
+          });
+
+        // Handle department change
+        departmentSelect.addEventListener('change', function() {
+          const selectedDepartment = this.value;
+          citySelect.innerHTML = '<option value="">Seleccione una ciudad</option>';
+          citySelect.disabled = !selectedDepartment;
+
+          if (selectedDepartment) {
+            const selectedRegion = geographicData.pais.find(
+              region => region.nombre_region === selectedDepartment
+            );
+
+            if (selectedRegion && selectedRegion.ciudades) {
+              selectedRegion.ciudades
+                .sort((a, b) => a.ciudad.localeCompare(b.ciudad))
+                .forEach(cityData => {
+                  const option = document.createElement('option');
+                  option.value = cityData.ciudad;
+                  option.textContent = cityData.ciudad;
+                  citySelect.appendChild(option);
+                });
+            }
+          }
+        });
       }
+
+      // Initialize nationality selector
+      const nationalitySelect = document.getElementById('nationality');
+      if (nationalitySelect && nationalityData.paises) {
+        nationalitySelect.innerHTML = '<option value="">Seleccione un país</option>';
+        nationalityData.paises
+          .sort((a, b) => a.nombre.localeCompare(b.nombre))
+          .forEach(pais => {
+            const option = document.createElement('option');
+            option.value = pais.datos[0].masculino;
+            option.textContent = pais.nombre;
+            nationalitySelect.appendChild(option);
+          });
+      }
+
+      handleInstitutionSelection();
 
     } catch (error) {
       console.error('Error initializing form:', error);
