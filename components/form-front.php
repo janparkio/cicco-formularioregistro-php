@@ -308,41 +308,46 @@
 
         <!-- Nombre de institución -->
         <div class="sm:col-span-4">
-          <label for="institution-name-search" class="block text-sm font-medium leading-6 text-gray-900">Nombre de
-            institución</label>
+          <label for="institution-name-search" class="block text-sm font-medium leading-6 text-gray-900">Nombre de institución</label>
           <div class="mt-2 relative">
-            <input type="text" id="institution-name-search" name="institution-name"
-              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-              placeholder="Buscar institución..." required>
+            <input type="text" id="institution-name-search" name="institution-name" readonly
+              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6 cursor-pointer"
+              placeholder="Seleccione una institución..." required>
+            <button type="button" id="clear-institution" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 hidden">
+              <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+              </svg>
+            </button>
             <div id="institution-name-dropdown"
               class="absolute z-10 w-full mt-1 bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm hidden">
             </div>
             <input type="hidden" id="institution-name" name="institution-name">
           </div>
           <span id="institution-name-error" class="mt-2 text-sm text-red-500 hidden"></span>
-          <button id="show-all-institutions" type="button" class="mt-2 text-sm text-primary-600">Mostrar todas las
-            instituciones</button>
-          <button id="request-new-institution" type="button" class="mt-2 ml-2 text-sm text-primary-600">Solicitar nueva
-            institución</button>
+          <button id="show-all-institutions" type="button" class="mt-2 text-sm text-primary-600">Mostrar todas las instituciones</button>
+          <button id="request-new-institution" type="button" class="mt-2 ml-2 text-sm text-primary-600">Solicitar nueva institución</button>
         </div>
 
         <!-- Modal for all institutions -->
         <div id="all-institutions-modal"
-          class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden">
+          class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden z-50">
           <div class="bg-white rounded-lg max-w-4xl w-full h-[90vh] flex flex-col">
             <!-- Header -->
             <div class="p-4 bg-gray-100">
-              <h3 class="text-lg font-medium">Todas las instituciones</h3>
+              <div class="mt-2">
+                <input type="text" id="modal-search-input" placeholder="Empieza a escribir el nombre de la institución..." 
+                  class="w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+              </div>
             </div>
             <!-- Content -->
             <div class="flex-grow overflow-y-auto p-4">
               <div class="overflow-x-auto">
                 <table class="table-auto w-full">
-                  <thead class="sticky top-0 bg-gray-100">
+                  <!-- <thead class="sticky top-0 bg-gray-100">
                     <tr>
                       <th class="px-4 py-2 text-left">Nombre de la institución</th>
                     </tr>
-                  </thead>
+                  </thead> -->
                   <tbody id="all-institutions-body" class="divide-y divide-gray-200">
                     <!-- Institutions will be populated here -->
                   </tbody>
@@ -355,15 +360,14 @@
                 <button type="button" id="close-all-institutions-modal"
                   class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors">Cerrar</button>
                 <button type="button" id="select-institution"
-                  class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors">Seleccionar
-                  institución</button>
+                  class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors">Seleccionar institución</button>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Modal para solicitar nueva institución -->
-        <div id="new-institution-modal"
+        <!-- <div id="new-institution-modal"
           class="fixed inset-0 bg-gray-500 bg-opacity-75 items-center justify-center hidden">
           <div class="bg-white p-6 rounded-lg">
             <h3 class="text-lg font-medium mb-4">Solicitar nueva institución</h3>
@@ -376,33 +380,44 @@
               <button type="button" id="close-modal" class="mt-4 ml-2 text-gray-600">Cancelar</button>
             </form>
           </div>
-        </div>
+        </div> -->
 
         <!-- Sede o Facultad -->
-        <div class="col-span-6 sm:col-span-3">
+        <div class="col-span-6 sm:col-span-3 faculty-field hidden">
           <label for="campus-faculty" class="block text-sm font-medium leading-6 text-gray-900">Sede o Facultad</label>
           <div class="mt-2">
             <select id="campus-faculty" name="campus-faculty" required disabled
-              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
+              class="block z-0 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6">
               <option value="">Seleccione una facultad</option>
             </select>
             <span id="campus-faculty-error" class="mt-2 text-sm text-red-500 hidden"></span>
+            <p class="mt-2 text-sm text-gray-500">Si no encuentra su sede o facultad, por favor seleccione "No aplica".</p>
           </div>
         </div>
 
         <!-- Unidad o Carrera específica -->
-        <div class="col-span-6 sm:col-span-3">
-          <label for="specific-unit-career" class="block text-sm font-medium leading-6 text-gray-900">Unidad o Carrera
-            específica</label>
-          <div class="mt-2">
-            <input type="text" id="specific-unit-career" name="specific-unit-career" required
-              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
-              <span id="specific-unit-career-error" class="mt-2 text-sm text-red-500 hidden"></span>
+        <div class="col-span-6 sm:col-span-3 career-field hidden">
+          <label for="specific-unit-career" class="block text-sm font-medium leading-6 text-gray-900">Unidad o Carrera específica</label>
+          <div class="mt-2 relative">
+            <input 
+              type="text" 
+              id="specific-unit-career" 
+              name="specific-unit-career" 
+              required 
+              disabled
+              list="career-options"
+              autocomplete="off"
+              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-600 sm:text-sm sm:leading-6"
+              placeholder="Seleccione o escriba una carrera">
+            <datalist id="career-options">
+              <!-- Options will be populated dynamically -->
+            </datalist>
+            <span id="specific-unit-career-error" class="mt-2 text-sm text-red-500 hidden"></span>
           </div>
         </div>
 
         <!-- Rol dentro de la institución -->
-        <div class="col-span-6 sm:col-span-3">
+        <div class="col-span-6 sm:col-span-3 role-field hidden">
           <label for="institutional-role" class="block text-sm font-medium leading-6 text-gray-900">Rol dentro de la
             institución</label>
           <div class="mt-2">
@@ -586,8 +601,7 @@
             <div class="flex items-center">
               <input id="ciencias_sociales" name="research-area" type="checkbox" value="ciencias_sociales"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600">
-              <label for="ciencias_sociales" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ciencias
-                Sociales</label>
+              <label for="ciencias_sociales" class="ml-3 block text-sm font-medium leading-6 text-gray-900">Ciencias Sociales</label>
             </div>
             <div class="flex items-center">
               <input id="humanidades_artes" name="research-area" type="checkbox" value="humanidades_artes"
@@ -785,6 +799,13 @@
         elements.hiddenInput.value = institution.value;
         elements.searchInput.classList.add('ring-2', 'ring-green-500');
         elements.dropdown.classList.add('hidden');
+        document.getElementById('clear-institution').classList.remove('hidden');
+        
+        // Solo mostrar el campo de facultad
+        document.querySelector('.faculty-field').classList.remove('hidden');
+        // Ocultar el campo de carrera
+        document.querySelector('.career-field').classList.add('hidden');
+        
         updateFacultySelect(institution.value);
       }
 
@@ -807,39 +828,59 @@
           })).sort((a, b) => a.text.localeCompare(b.text)), "Seleccione una facultad");
 
           facultySelect.disabled = false;
-          careerSelect.innerHTML = '<option value="">Seleccione una carrera</option>';
           careerSelect.disabled = true;
+          careerSelect.value = '';
 
-          facultySelect.addEventListener('change', function () {
-            updateCareerSelect(institutionName, this.value);
-          });
+          // Remover listener anterior si existe
+          facultySelect.removeEventListener('change', facultyChangeHandler);
+          // Agregar nuevo listener
+          facultySelect.addEventListener('change', facultyChangeHandler);
+        }
+      }
+
+      function facultyChangeHandler() {
+        const careerField = document.querySelector('.career-field');
+        const careerSelect = document.getElementById('specific-unit-career');
+        
+        if (this.value) {
+          careerField.classList.remove('hidden');
+          updateCareerSelect(elements.hiddenInput.value, this.value);
         } else {
-          facultySelect.innerHTML = '<option value="">Seleccione una facultad</option>';
-          facultySelect.disabled = true;
-          careerSelect.innerHTML = '<option value="">Seleccione una carrera</option>';
+          careerField.classList.add('hidden');
+          careerSelect.value = '';
           careerSelect.disabled = true;
         }
       }
 
       function updateCareerSelect(institutionName, facultyName) {
-        const careerSelect = document.getElementById('specific-unit-career');
+        const careerInput = document.getElementById('specific-unit-career');
+        const careerDatalist = document.getElementById('career-options');
 
-        if (!careerSelect) {
-          console.error('Career select element not found');
+        if (!careerInput || !careerDatalist) {
+          console.error('Career input or datalist element not found');
           return;
         }
 
         const selectedFaculty = institutionData[institutionName][facultyName];
 
         if (selectedFaculty) {
-          populateSelect('specific-unit-career', selectedFaculty.map(career => ({
-            value: career,
-            text: career
-          })).sort((a, b) => a.text.localeCompare(b.text)), "Seleccione una carrera");
-          careerSelect.disabled = false;
+          // Limpiar el datalist
+          careerDatalist.innerHTML = '';
+          
+          // Poblar el datalist con las opciones ordenadas alfabéticamente
+          selectedFaculty
+            .sort((a, b) => a.localeCompare(b))
+            .forEach(career => {
+              const option = document.createElement('option');
+              option.value = career;
+              careerDatalist.appendChild(option);
+            });
+
+          careerInput.disabled = false;
         } else {
-          careerSelect.innerHTML = '<option value="">Seleccione una carrera</option>';
-          careerSelect.disabled = true;
+          careerDatalist.innerHTML = '';
+          careerInput.disabled = true;
+          careerInput.value = '';
         }
       }
 
@@ -872,6 +913,14 @@
       elements.showAllButton.addEventListener('click', function () {
         showAllInstitutions(); // Populate the modal content
         elements.allInstitutionsModal.classList.remove('hidden'); // Show the modal
+        
+        // Auto-focus en el campo de búsqueda
+        const searchInput = document.getElementById('modal-search-input');
+        if (searchInput) {
+          setTimeout(() => {
+            searchInput.focus();
+          }, 100); // Pequeño delay para asegurar que el modal esté visible
+        }
       });
 
       elements.closeAllInstitutionsModal.addEventListener('click', function () {
@@ -928,6 +977,114 @@
       elements.requestNewButton.addEventListener('click', function () {
         // TODO: Replace later with actual website.
         window.open('https://cicco.conacyt.gov.py/contactos/', '_blank');
+      });
+
+      // Add clear institution functionality
+      const clearInstitutionButton = document.getElementById('clear-institution');
+      if (clearInstitutionButton) {
+        clearInstitutionButton.addEventListener('click', function() {
+          elements.searchInput.value = '';
+          elements.hiddenInput.value = '';
+          elements.searchInput.classList.remove('ring-2', 'ring-green-500');
+          clearInstitutionButton.classList.add('hidden');
+          
+          // Ocultar y limpiar ambos campos
+          document.querySelector('.faculty-field').classList.add('hidden');
+          document.querySelector('.career-field').classList.add('hidden');
+          
+          const facultySelect = document.getElementById('campus-faculty');
+          const careerSelect = document.getElementById('specific-unit-career');
+          
+          if (facultySelect) {
+            facultySelect.value = '';
+            facultySelect.disabled = true;
+          }
+          if (careerSelect) {
+            careerSelect.value = '';
+            careerSelect.disabled = true;
+          }
+        });
+      }
+
+      // Add modal search functionality
+      const modalSearchInput = document.getElementById('modal-search-input');
+      if (modalSearchInput) {
+        modalSearchInput.addEventListener('input', function() {
+          const tbody = elements.allInstitutionsBody;
+          tbody.innerHTML = '';
+          
+          // Si el input está vacío, mostrar todas las instituciones
+          if (!this.value.trim()) {
+            institutions
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .forEach(institution => {
+                addInstitutionRow(tbody, institution);
+              });
+          } else {
+            // Si hay texto, buscar y mostrar resultados filtrados
+            const searchResults = fuse.search(this.value);
+            const sortedResults = searchResults
+              .map(result => result.item)
+              .sort((a, b) => a.name.localeCompare(b.name));
+            
+            sortedResults.forEach(institution => {
+              addInstitutionRow(tbody, institution);
+            });
+          }
+          
+          // Siempre agregar la fila de solicitud al final
+          addRequestInstitutionRow(tbody);
+        });
+      }
+
+      // Función helper para agregar una fila de institución
+      function addInstitutionRow(tbody, institution) {
+        const row = document.createElement('tr');
+        row.classList.add('hover:bg-gray-100', 'transition-colors', 'cursor-pointer');
+        const cell = document.createElement('td');
+        cell.textContent = institution.name;
+        cell.classList.add('px-4', 'py-2');
+        row.appendChild(cell);
+        row.addEventListener('click', () => {
+          const selectedRow = tbody.querySelector('tr.selected');
+          if (selectedRow) {
+            selectedRow.classList.remove('selected', 'bg-blue-100');
+          }
+          row.classList.add('selected', 'bg-blue-100');
+        });
+        tbody.appendChild(row);
+      }
+
+      // Función helper para agregar la fila de solicitud
+      function addRequestInstitutionRow(tbody) {
+        const requestRow = document.createElement('tr');
+        requestRow.innerHTML = `
+          <td class="px-4 py-4 text-center border-t">
+            <a href="https://cicco.conacyt.gov.py/contactos/" 
+               class="text-primary-600 hover:text-primary-900 text-sm font-medium inline-flex items-center">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              No encuentro mi institución, quiero solicitar su adición
+            </a>
+          </td>
+        `;
+        
+        tbody.appendChild(requestRow);
+      }
+
+      // Agregar evento click al campo de búsqueda de institución
+      elements.searchInput.addEventListener('click', function() {
+        showAllInstitutions(); // Populate the modal content
+        elements.allInstitutionsModal.classList.remove('hidden'); // Show the modal
+        
+        // Auto-focus en el campo de búsqueda
+        const searchInput = document.getElementById('modal-search-input');
+        if (searchInput) {
+          setTimeout(() => {
+            searchInput.focus();
+          }, 100);
+        }
       });
     };
 
@@ -1012,3 +1169,31 @@
     initForm();
   });
 </script>
+
+<style>
+  /* Normalizar apariencia del datalist */
+  input[list]::-webkit-calendar-picker-indicator {
+    color: transparent;
+    background: transparent;
+    cursor: pointer;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 2.5rem;
+    z-index: 1;
+  }
+
+  input[list] {
+    padding-right: 2.5rem; /* Espacio para el icono */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+  }
+
+  /* Ocultar el icono nativo en Firefox */
+  input[list]::-moz-list-bullet {
+    display: none;
+  }
+</style>
