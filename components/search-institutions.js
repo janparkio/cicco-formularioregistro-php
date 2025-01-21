@@ -84,6 +84,11 @@ class InstitutionSearch {
     this.elements.closeAllInstitutionsModal.addEventListener('click', () => this.hideModal());
     this.elements.modalSearchInput?.addEventListener('input', (e) => this.handleModalSearch(e));
 
+    // Request new institution button event
+    this.elements.requestNewButton?.addEventListener('click', () => {
+      window.location.href = 'https://cicco.conacyt.gov.py/contactos/';
+    });
+
     // Clear button event
     this.elements.clearInstitution?.addEventListener('click', () => this.clearInstitution());
 
